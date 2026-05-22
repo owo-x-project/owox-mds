@@ -35,7 +35,6 @@ argument-hint: "目的=<何を検証するか> 進め方=<自走|対話>"
 - 合格条件が曖昧なまま判定しない
 - 実施結果と推測を混ぜない
 - 未確認項目を合格扱いしない
-- `mds/core`、`mds/cli`、`mds/lsp` など mds 管理 package の build / test / lint 検証は、通常 `mds package sync`、`mds build`、`mds lint --package ...`、`mds test --package ...` を使い、Cargo 直実行は mds CLI 起動不能時の bootstrap、release binary 作成、mds 管理外 Rust workspace 検証に限る
 - `docs/project/tech-stack.md` と `docs/project/patterns/index.md` を読み飛ばさない
 - 重大な未達は隠さない
 

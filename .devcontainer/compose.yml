@@ -1,13 +1,13 @@
 services:
   dev:
     build:
-        context: ..
-        dockerfile: .devcontainer/Dockerfile
-        args:
-          NODE_MAJOR: ${NODE_MAJOR:-24}
-          RUST_VERSION: ${RUST_VERSION:-1.86.0}
-          PYTHON_VERSION: ${PYTHON_VERSION:-3.13}
-    image: ${COMPOSE_PROJECT_NAME:-mds}-opencode-devcontainer:local
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        NODE_MAJOR: ${NODE_MAJOR:-22}
+        RUST_VERSION: ${RUST_VERSION:-stable}
+        CODEX_VERSION: ${CODEX_VERSION:-latest}
+    image: ${COMPOSE_PROJECT_NAME:-monorepo}-codex-devcontainer:local
     working_dir: /workspace
     init: true
     command: sleep infinity
@@ -15,22 +15,12 @@ services:
     environment:
       TZ: ${TZ:-Asia/Tokyo}
       COMPOSE_FILE: /workspace/.devcontainer/compose.yml
-      NPM_CONFIG_PREFIX: /home/vscode/.npm-global
-      CARGO_HOME: /usr/local/cargo
-      RUSTUP_HOME: /usr/local/rustup
-      UV_CACHE_DIR: /home/vscode/.cache/uv
-      PIP_CACHE_DIR: /home/vscode/.cache/pip
-      PIPX_HOME: /home/vscode/.local/pipx
-      PIPX_BIN_DIR: /home/vscode/.local/bin
-      PATH: /usr/local/cargo/bin:/home/vscode/.npm-global/bin:/home/vscode/.local/bin:/usr/local/bin:${PATH}
+      CODEX_HOME: /root/.codex
+      PATH: /usr/local/cargo/bin:/usr/local/bin:${PATH}
     volumes:
       - ..:/workspace:cached
       - ${HOME}/.ssh:/home/vscode/.ssh:ro
-      - opencode-config:/home/vscode/.config/opencode
-      - opencode-data:/home/vscode/.local/share/opencode
-      - opencode-cache:/home/vscode/.cache/opencode
-      - codex-home:/home/vscode/.codex
-      - npm-global:/home/vscode/.npm-global
+      - codex-home:/root/.codex
       - user-local:/home/vscode/.local
       - user-cache:/home/vscode/.cache
     extra_hosts:
@@ -38,9 +28,5 @@ services:
 
 volumes:
   codex-home:
-  opencode-config:
-  opencode-data:
-  opencode-cache:
-  npm-global:
   user-local:
   user-cache:

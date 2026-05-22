@@ -1,5 +1,5 @@
 {
-  "name": "mds-dev",
+  "name": "owox-harness-dev",
   "dockerComposeFile": "compose.yml",
   "service": "dev",
   "runServices": [
@@ -10,9 +10,6 @@
   "updateRemoteUserUID": true,
   "shutdownAction": "stopCompose",
   "overrideCommand": false,
-  "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:/usr/local/cargo/bin:/home/vscode/.npm-global/bin:/home/vscode/.local/bin:/usr/local/bin"
-  },
   "customizations": {
     "vscode": {
       "extensions": [],

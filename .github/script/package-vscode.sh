@@ -58,7 +58,7 @@ cp "$SOURCE_DIR/language-configuration.json" "$PACKAGE_DIR/language-configuratio
 cp "$SOURCE_DIR/.vscodeignore" "$PACKAGE_DIR/.vscodeignore"
 cp -R "$SOURCE_DIR/snippets" "$PACKAGE_DIR/snippets"
 cp -R "$SOURCE_DIR/syntaxes" "$PACKAGE_DIR/syntaxes"
-cp -R "$BUILD_DIR/out" "$PACKAGE_DIR/out"
+cp -R "$SOURCE_DIR/out" "$PACKAGE_DIR/out"
 
 if [[ -n "$LSP_BINARY" ]]; then
   if [[ -z "$TARGET" ]]; then

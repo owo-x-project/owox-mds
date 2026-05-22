@@ -31,7 +31,6 @@ argument-hint: "目的=<何を直すか> 進め方=<自走|対話>"
 5. 原因候補を絞り、根本原因を特定する
 6. 最小限の修正を行い、関連テストと回帰確認を実施する
 7. 必要な正本更新要否を確認し、task に記録する
-8. mds の format、正本構造、主要 command surface に触れた修正では `mds/core/src/init/templates/` の AI Kit template content と AI Agent CLI 初期化の検証更新を同じ修正で行う
 
 ## ルール
 
@@ -39,7 +38,6 @@ argument-hint: "目的=<何を直すか> 進め方=<自走|対話>"
 - 症状、原因、修正、回帰確認を分けて記録する
 - 仕様問題を実装だけで隠さない
 - `docs/project/tech-stack.md` と `docs/project/patterns/index.md` を読み飛ばさない
-- mds の format、ルール、コマンドを変える修正では、AI Kit template の追随更新だけでなく template content 自体の更新を同じ修正判断に含める
 - 高リスク変更が必要なら `request_user_input` を使う
 
 ## 確認事項

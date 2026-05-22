@@ -37,7 +37,6 @@ argument-hint: "目的=<何を直すか> 進め方=<自走|対話>"
 - 再現または症状確認なしに修正を始めない
 - 症状、原因、修正、回帰確認を分けて記録する
 - 仕様問題を実装だけで隠さない
-- `mds/core`、`mds/cli`、`mds/lsp` など mds 管理 package の回帰確認は、通常 `mds build`、`mds lint --package ...`、`mds test --package ...` を使い、Cargo 直実行は mds CLI 起動不能時の bootstrap、release binary 作成、mds 管理外 Rust workspace 検証に限る
 - `docs/project/tech-stack.md` と `docs/project/patterns/index.md` を読み飛ばさない
 - 高リスク変更が必要なら `question` を使う
 

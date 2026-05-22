@@ -6,14 +6,14 @@ argument-hint: "分類=<flow|state|permission|interaction|api|data> 題名=<題�
 
 ## 目的
 
-旧 spec 相当の振る舞いを package overview / implementation md / pattern / ADR に移し、以後の正本を docs/project/specs に置かないようにする。
+requirement を具体的な振る舞い、状態、入出力、エラー、横断ルールとして spec に落とし込む。
 
 ## 前提資料
 
 - `docs/project/index.md`
 - `docs/project/glossary/core.md`
-- `mds/core/.mds/source/overview.md`
-- `mds/cli/.mds/source/overview.md`
+- `docs/project/specs/index.md`
+- `docs/project/specs/shared/index.md`
 - `.agents/skills/_shared/document-reference-rules.md`
 - `.agents/skills/_shared/document-update-checklist.md`
 - `.agents/skills/docs-update-spec/references/spec.template.md`
@@ -25,14 +25,13 @@ argument-hint: "分類=<flow|state|permission|interaction|api|data> 題名=<題�
 1. 必要なら `request_user_input` で対象 requirement、主要な入出力、状態、エラー、横断ルールを確認する
 2. 共有仕様か subproject 固有仕様かを判断する
 3. 既存 spec と重複、矛盾がないか調べる
-4. package overview または implementation md を更新する
-5. 関連 requirement / ADR / pattern / task の参照先を新しい正本へ張り替える
-6. code / test / validation / harness 影響を確認し、必要なら ADR または skill を更新する
+4. `shared/` または `<subproject>/` に `SPEC-<category>-<short-title>.md` を作成または更新する
+5. `.agents/skills/_shared/document-reference-rules.md` に従い、配置先に対応する `index.md` を必ず更新する
+6. spec 変更に伴う code / test / validation / ADR 影響を確認し、必要なら ADR を更新または作成する
 
 ## ルール
 
-- 新規 spec 個票は作らない
-- migration 先の mds 正本または docs/project の既存正本を先に更新する
+- spec は requirement に接続できる状態で書く
 - 挙動は外部観測点から見える振る舞いとして書く
 - 状態遷移、不変条件、エラー条件を省略しない
 - 参照の書き方は `.agents/skills/_shared/document-reference-rules.md` に従う

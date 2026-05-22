@@ -4,7 +4,7 @@ set -euo pipefail
 # generate-release-artifacts.sh
 #
 # Generates release quality gate artifacts for all distribution targets.
-# Run after `cargo run -p mds-cli -- build --verbose && ./.github/script/sync-self-hosted-rust.sh && cd .build/rust && cargo build --release && cargo package --allow-dirty`.
+# Run after `cargo build --workspace --release && cargo package --allow-dirty -p mds-core && cargo package --allow-dirty -p mds-cli && cargo package --allow-dirty -p mds-lsp`.
 #
 # Outputs:
 #   .build/release/checksums/   — SHA-256 digests
@@ -122,10 +122,9 @@ echo "=== Cargo crates ==="
 
 (
   cd "$ROOT"
-  cargo run -p mds-cli -- build --verbose
-  ./.github/script/sync-self-hosted-rust.sh
+  cargo build --workspace --release
 )
-CRATE_DIR="$ROOT/.build/rust/target/package"
+CRATE_DIR="$ROOT/target/package"
 for crate in mds-core mds-cli mds-lsp; do
   echo "[$crate]"
   CRATE_FILE="$CRATE_DIR/${crate}-${VERSION}.crate"
@@ -133,7 +132,7 @@ for crate in mds-core mds-cli mds-lsp; do
   if [[ ! -f "$CRATE_FILE" ]]; then
     # Try to package if not already present.
     echo "  packaging $crate..."
-    if ! (cd "$ROOT/.build/rust" && cargo package --allow-dirty --no-verify -p "$crate" >/dev/null); then
+    if ! (cd "$ROOT" && cargo package --allow-dirty --no-verify -p "$crate" >/dev/null); then
       echo "  ERROR: failed to package $crate" >&2
       exit 1
     fi
