@@ -31,14 +31,5 @@
 ## 参照
 
 - `active/`: 採否判断前の proposal の配置先
-- `active/proposal-markdown-authoring-layout-v2.md`: `.mds/` fixed root、source/test 分離、logical module id、descriptor-driven adapter へ一括移行する proposal
-- `active/PROP-mds-lsp.md`: mds-lsp (Language Server Protocol) に関する proposal
-- `archive/`: 参照優先度を落とした proposal の配置先
-- `archive/proposal-self-hosted-source-layout.md`: mds 自身の mds 化、`.build/` 生成物集約、`crates/` 廃止に関する採用済み proposal。ADR-007 に昇格済み
-- `archive/proposal-markdown-grammar-open-details.md`: Markdown grammar の未確定細部に関する採否判断済み proposal
-- `archive/proposal-post-mvp-generation-followups.md`: Post-MVP の残要件達成計画に関する採否判断済み proposal
-- `archive/proposal-md-state-quality-operations.md`: Markdown 状態の lint / lint --fix / test に関する採否判断済み proposal
-- `archive/proposal-graph-doctor-commands.md`: 旧 `mds graph` / `mds doctor` に関する採否判断済み proposal。`mds graph` は後続判断で削除済み
-- `archive/proposal-package-sync-hooks.md`: `mds package sync` と任意 post hook に関する採否判断済み proposal
-- `archive/proposal-import-expression-extensions.md`: `Uses` import 表現拡張に関する採否判断済み proposal
-- `archive/proposal-distribution-version-policy.md`: 配布と version 方針に関する採否判断済み proposal
+- `active/proposal-capability-schema-runtime.md`: built-in descriptor / tool registry 依存を config/schema runtime へ移す提案
+- `archive/`: 参照優先度を落とした proposal の配置先。現在は個票なし

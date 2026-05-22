@@ -20,26 +20,32 @@
 
 ## 命名規則
 
-- `REQ-<category>-<short-title>.md`
+- `v1/REQ-<category>-<short-title>.md`
+- `v2/REQ-<category>-<short-title>.md`
 
 ## 参照ルール
 
 - 要求変更時は spec / validation / ADR への影響を確認する
 
+## v1 要件
+
+- `v1/REQ-product-markdown-source-of-truth.md`: Markdown を実装正本として扱うための中核 requirement
+- `v1/REQ-quality-safe-package-bounded-generation.md`: package 境界と既存ファイルを守る安全性 requirement
+- `v1/REQ-quality-language-and-toolchain-independence.md`: 特定言語や単一ツールチェーンへ閉じない requirement
+- `v1/REQ-ux-human-ai-authoring-experience.md`: 人間と AI 両対応で、隠し marker に依存しない authoring 体験 requirement
+- `v1/REQ-ux-guided-editor-authoring.md`: `mds` 記法未習得でも editor 補助で作成できる requirement
+- `v1/REQ-ux-language-aware-embedded-lsp-bridge.md`: 言語自動検知と埋め込み code への既存 LSP 橋渡し requirement
+- `v1/REQ-ux-navigable-mds-knowledge-graph.md`: 依存、参照、定義へ簡単に移動できる requirement
+- `v1/REQ-ux-low-context-reference-layout.md`: 低コンテキスト消費で、視認しにくい補助 marker に頼らず必要情報へ到達できる参照配置 requirement
+- `v1/REQ-ux-section-title-independence.md`: section title 文字列に依存しない semantic 解釈 requirement
+- `v1/REQ-quality-diagnostic-remap-to-mds.md`: tool 診断の参照先を `mds file` へ戻す requirement
+- `v1/REQ-quality-portable-readable-verifiable-markdown.md`: 一般的 Markdown としての可読性と機械検証可能性 requirement
+
+## v2 目標要件
+
+- `v2/REQ-product-v2-project-wide-document-governance.md`: `mds` を project 全体の資料管理へ発展させる将来 requirement
+
 ## 参照
 
-- `REQ-core-markdown-source-of-truth.md`: Markdown を正本、生成コードを派生物として扱う要求
-- `REQ-platform-multi-ecosystem-distribution.md`: GitHub Releases native binary と VS Code 拡張を中心にした配布要求
-- `REQ-adapter-required-language-adapters.md`: TypeScript / Python / Rust の必須 language adapter 要求
-- `REQ-config-toml-fixed-config.md`: `mds.config.toml` 固定と設定継承の要求
-- `REQ-monorepo-package-boundary.md`: monorepo での package 単位の mds 対象判定要求
-- `REQ-doc-model-markdown-document-types.md`: `overview.md`、implementation md の文書種別要求
-- `REQ-implementation-one-md-one-feature.md`: 1 implementation md が 1 機能を扱う要求
-- `REQ-metadata-expose-uses.md`: `Expose` と `Uses` による公開面と依存の明示要求
-- `REQ-generation-code-output-rules.md`: Source / Types / Test の生成コード出力要求
-- `REQ-quality-md-state-validation.md`: Markdown 状態での check / lint / lint --fix / test 要求
-- `REQ-cli-command-surface.md`: CLI コマンド面の要求
-- `REQ-ux-obsidian-readable-markdown.md`: Obsidian で読める Markdown の要求
-- `REQ-ai-agent-cli-initialization.md`: AI agent CLI 向け instruction / skill / workflow 初期化要求
-- `REQ-init-development-environment-setup.md`: `mds init` による project 初期化と開発環境セットアップ要求
-- `REQ-release-prepublish-quality.md`: 全配布経路の公開前品質要求
+- `v1/index.md`: v1 要件の入口
+- `v2/index.md`: v2 目標要件の入口

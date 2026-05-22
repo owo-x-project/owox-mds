@@ -2,7 +2,7 @@
 
 ## 目的
 
-`docs/project/` は、このプロジェクトの正本を置く場所です。要求、仕様、判断、用語、検証、外部連携、チーム資料をここで管理します。mds で扱う Markdown 正本は設計説明だけではなく、implementation md 内に実装レベルのコードを含む前提です。
+`docs/project/` は、このプロジェクトの正本を置く場所です。要求、仕様、計画、判断、用語、検証、外部連携、チーム資料をここで管理します。
 
 ## 読む順序
 
@@ -15,29 +15,31 @@
 
 - `research/`: 技術調査、制約調査、実現性確認
 - `proposals/`: 正式化前の設計草案、提案、移行案
+- `plan/`: 実装計画、ロードマップ、検証可能なフェーズと task
 - `requirements/`: 何を実現するか
+- `specs/`: どう振る舞うか
 - `adr/`: 重要判断と理由
 - `patterns/`: 横断的に再利用する設計・実装パターン
-- `validation.md`: mds を開発する過程で随時確認すべき検証項目
 
 ## AI 参照導線
 
-AI は通常、この index から `glossary/core.md`、`architecture.md`、対象カテゴリ `index.md`、必要なら各 package の `.mds/source/overview.md` と implementation md を参照します。archive は明示的に必要な場合だけ参照します。
+AI は通常、この index から `glossary/core.md`、`architecture.md`、対象カテゴリ `index.md`、対象個票の順で参照します。archive は明示的に必要な場合だけ参照します。
 
 ## 参照
 
 - `glossary/index.md`: 用語集カテゴリの入口
 - `glossary/core.md`: 必読の共通用語
-- `architecture.md`: 不変条件、責務分離、workspace 構成、設計方針
+- `architecture.md`: 不変条件、責務分離、設計方針、config/schema runtime 原則
 - `research/index.md`: 技術調査カテゴリの入口
 - `proposals/index.md`: 設計草案カテゴリの入口
+- `proposals/active/proposal-capability-schema-runtime.md`: built-in descriptor / tool registry 依存の移行提案
+- `plan/index.md`: 実装計画カテゴリの入口
+- `plan/v1/index.md`: capability schema migration と v1 completion を統合した単一ロードマップ
 - `requirements/index.md`: 要求カテゴリの入口
+- `specs/index.md`: 仕様カテゴリの入口
 - `patterns/index.md`: パターンカテゴリの入口
 - `adr/index.md`: 重要判断カテゴリの入口
 - `teams/index.md`: チームガイドカテゴリの入口
-- `../../mds/core/.mds/source/overview.md`: core behavioral source of truth
-- `../../mds/cli/.mds/source/overview.md`: CLI behavioral source of truth
-- `../../mds/lsp/.mds/source/overview.md`: LSP package source of truth
 - `integrations/index.md`: 外部連携カテゴリの入口
-- `tech-stack.md`: 採用技術、runtime、parser 依存、配布経路一覧
-- `validation.md`: 開発時の検証項目と代表確認コマンド
+- `tech-stack.md`: 採用技術一覧
+- `validation.md`: 検証方針
