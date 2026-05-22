@@ -1,51 +1,44 @@
-# Greet
+# app.greet
 
 ## Purpose
 
-名前を受け取り、挨拶メッセージを返す関数を提供します。
+名前を受け取り、挨拶メッセージを返す。
 
 ## Contract
 
-- `greet` は `GreetOptions` を受け取り、`"Hello, <name>!"` 形式の文字列を返す。
-- `name` が空文字列の場合でもエラーにせず `"Hello, !"` を返す。
+- 入力は `GreetOptions`。
+- 出力は `string`。
+- 例外は投げない。
+- `name` が未指定または空白のみの場合は `Anonymous` を使う。
 
-## Exports
+## API
 
-| Name | Visibility | Summary |
-| --- | --- | --- |
-| GreetOptions | public | Greeting input data accepted by `greet`. |
-| greet | public | Returns a greeting message from the provided options. |
+`greet` は外部公開 API で、`GreetOptions` は挨拶生成に必要な入力だけを持つ。
 
 ## Source
 
 ##### GreetOptions
 
-`GreetOptions` carries the name used to build a greeting message.
+`GreetOptions` は挨拶生成に必要な入力です。
 
 ```ts
 export interface GreetOptions {
-  name: string;
+  name?: string;
 }
 ```
 
 ##### greet
 
-`greet` is the public function referenced by tests and callers that need a formatted greeting.
+`greet` は入力を正規化して挨拶文字列を返します。
 
 ```ts
 export function greet(options: GreetOptions): string {
-  return `Hello, ${options.name}!`;
+  const name = options.name?.trim() || "Anonymous";
+  return `Hello, ${name}!`;
 }
 ```
 
-### Dependencies
-
-| Target | Summary |
-| --- | --- |
-
 ## Cases
 
-| # | Input | Expected | Notes |
-| --- | --- | --- | --- |
-| 1 | `{ name: "World" }` | `"Hello, World!"` | 基本ケース |
-| 2 | `{ name: "" }` | `"Hello, !"` | 空文字列 |
+- `name: "World"` を渡すと `"Hello, World!"` を返す。
+- `name` が未指定または空白のみのときは `"Hello, Anonymous!"` を返す。

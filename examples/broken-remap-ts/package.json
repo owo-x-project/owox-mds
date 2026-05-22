@@ -1,12 +1,10 @@
 {
-  "name": "minimal-ts",
+  "name": "broken-remap-ts",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "typecheck": "npx --no-install tsc --noEmit --pretty false -p tsconfig.json",
     "lint": "npx --no-install prettier --check src tests",
-    "format": "npx --no-install prettier --write src tests",
-    "test": "npx --no-install vitest run"
+    "format": "npx --no-install prettier --write src tests"
   },
   "devDependencies": {
     "prettier": "3.3.3",

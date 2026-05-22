@@ -1,0 +1,14 @@
+id = "npm"
+aliases = ["node", "nodejs"]
+display_name = "Node.js (npm)"
+lang = "ts"
+metadata_files = ["package.json"]
+lockfiles = ["package-lock.json"]
+metadata_reader = "node-package-json"
+
+[commands]
+install = "npm install"
+build = "npm run build"
+typecheck = "npm run typecheck"
+lint = "npm run lint"
+test = "npm test"
