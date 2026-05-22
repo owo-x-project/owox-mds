@@ -17,21 +17,23 @@ This skill helps you work with the mds (Markdown Source) system. mds treats Mark
 ## Commands
 
 ```sh
-mds new <name.lang.md>  # Create new implementation markdown from template
-mds new overview.md        # Create hierarchy overview markdown without Imports / Exports
-mds new index.ts.md        # Create language root module markdown for Imports / Exports
-mds lint               # Validate markdown structure and references
-mds build --dry-run     # Preview what would be generated
-mds build               # Generate code from markdown sources
-mds lint --fix --check  # Fix and validate formatting
-mds test                # Run tests on generated outputs
+mds new <name.lang.md> impl # Create implementation markdown from the current tableless template
+mds new <name.lang.md> test # Create matching test markdown with Covers
+mds new overview.md overview # Create hierarchy overview markdown
+mds new index.ts.md root-module # Create language root module markdown with API prose
+mds lint                    # Validate markdown structure and references
+mds build --dry-run         # Preview what would be generated
+mds build                   # Generate code from markdown sources
+mds lint --fix --check      # Fix and validate formatting
+mds test                    # Run tests on generated outputs
 ```
 
 ## Workflow
 
 1. Read existing `.mds/source/` files to understand the current state
-2. Create new markdown files with `mds new <name.lang.md>` (generates correct template)
-3. Record dependencies in Imports; keep spec-state docs code-free until implementation is ready
+2. Create new impl docs with `mds new <name.lang.md> impl`, test docs with `mds new <name.lang.md> test`, or root docs with `mds new index.ts.md root-module`
+3. Describe behavior in prose sections such as `Purpose`, `Contract`, `API`, `Cases`, and `Covers`
+4. Write normal import/use/require statements directly inside generated code fences when the implementation needs dependencies
 4. Run `mds lint` to validate structure
 5. Run `mds build --dry-run` to preview generation
 6. Run `mds build` to generate code
@@ -42,18 +44,19 @@ mds test                # Run tests on generated outputs
 Always use `mds new` to create implementation markdown files:
 
 ```sh
-mds new greet.ts.md                    # New TypeScript feature
-mds new utils/helper.py.md             # New Python feature in subdirectory
-mds new parser.rs.md                   # New Rust feature
-mds new sub/overview.md                   # New source overview for subdirectory
-mds new sub/mod.rs.md                     # New Rust directory root Imports / Exports
-mds new greet.ts.md --package ./my-pkg # Specify target package
+mds new greet.ts.md impl                 # New TypeScript feature
+mds new utils/helper.py.md impl          # New Python feature in subdirectory
+mds new parser.rs.md impl                # New Rust feature
+mds new greet.ts.md test                 # New test doc for a feature
+mds new overview.md overview             # New source overview markdown
+mds new sub/mod.rs.md root-module        # New Rust directory root module doc
+mds new greet.ts.md impl --package ./my-pkg
 ```
 
 ## Format References
 
 - See `.mds/reference/overview.md` for source overview format
-- See `.mds/reference/root-module.md` for package or directory root Imports / Exports format
+- See `.mds/reference/root-module.md` for package or directory root API doc format
 - See `.mds/reference/impl.md` for source implementation md format
 - See `.mds/reference/test.md` for test md format
 
@@ -65,7 +68,7 @@ Implementation files: `.mds/source/name.{lang}.md` → generates `src/name.{lang
 
 - One `.{lang}.md` file = one generated source file
 - All code blocks in the file are concatenated (separated by blank lines) to produce the output
-- Import/use/require statements are forbidden in code blocks; record dependencies in the Imports section table
+- Normal import/use/require statements belong in code blocks when the implementation needs dependencies
 - Each code block must contain exactly one logical unit (type, function, class, impl, etc.) by default
 - Doc comments and docstrings belong in surrounding markdown text, not inside code blocks
 
@@ -73,29 +76,22 @@ Implementation files: `.mds/source/name.{lang}.md` → generates `src/name.{lang
 
 Document source md as both specification and implementation source:
 
-- `## {{PURPOSE}}` — Feature description (documentation only)
-- `## {{CONTRACT}}` — Behavior guarantees (documentation only)
-- `## {{SOURCE}}` — Implementation code blocks
-- `## {{CASES}}` — Example behaviors (documentation only)
-- Source md without generated `{{TYPES}}` / `{{SOURCE}}` code is spec state; adding generated code makes it impl state
-- `{{EXPORTS}}.{{SUMMARY}}` must describe the public definition; do not use `-`
-- Exported definitions referenced by other files need matching H5 shared definitions with prose
+- `## {{PURPOSE}}` — Feature description
+- `## {{CONTRACT}}` — Behavior guarantees
+- `## API` — Public surface and module role in prose
+- `## {{SOURCE}}` — Implementation code blocks with normal language imports/exports
+- `## {{CASES}}` — Example behaviors
+- Test docs center on `## Covers`, `## Cases`, and `## Test`
+- Source md without generated `{{SOURCE}}` code is spec state; adding generated code makes it impl state
 
-### {{IMPORTS}} Section
+### Tableless Pattern
 
-| {{FROM}} | {{TARGET}} | {{SYMBOLS}} | {{VIA}} | {{SUMMARY}} | {{REFERENCE}} |
-| --- | --- | --- | --- | --- | --- |
-| internal | ./config | Config | - | Configuration module | [./config.ts.md#config](./config.ts.md#config) |
-| external | lodash | mapValues | - | Utility library | - |
-
-##### Config
-
-Add an H5 section for shared definitions that other modules or packages import.
+- Source docs usually use `Purpose`, `Contract`, `API`, `Source`, and `Cases`
+- Test docs use `Purpose`, `Covers`, `Cases`, and `Test`
 
 ### Constraints
 
 - One `.{lang}.md` per feature (one file = one generated source)
 - Code fence language must match file extension
-- Imports/use/require are forbidden in code blocks; record dependencies in the Imports section table
 - Default `mds lint` expects top-level implementations to be split per code fence; projects may relax selected checks in `[check]`
 - Multiple code blocks per section → concatenated with blank lines

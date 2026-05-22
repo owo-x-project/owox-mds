@@ -9,17 +9,18 @@ Markdown is the source of truth. Generated code must not be edited directly.
 ## Dev Environment
 
 ```sh
-mds new <name.lang.md>  # Create new implementation markdown from template
-mds new overview.md        # Create hierarchy overview markdown without Imports / Exports
-mds new index.ts.md        # Create language root module markdown for Imports / Exports
-mds lint               # Validate markdown structure
-mds build --dry-run     # Preview generation output
-mds build               # Generate code from markdown
-mds lint --fix --check  # Fix and validate formatting
-mds test                # Run tests on generated outputs
+mds new <name.lang.md> impl # Create implementation markdown from the current tableless template
+mds new <name.lang.md> test # Create matching test markdown with Covers
+mds new overview.md overview # Create hierarchy overview markdown
+mds new index.ts.md root-module # Create language root module markdown with API prose
+mds lint                    # Validate markdown structure
+mds build --dry-run         # Preview generation output
+mds build                   # Generate code from markdown
+mds lint --fix --check      # Fix and validate formatting
+mds test                    # Run tests on generated outputs
 ```
 
-Always use `mds new` to create new `.mds/source/` files and add matching `.mds/test/` files when behavior needs executable verification. Never create managed scaffolding manually.
+Always use `mds new <path> <kind>` to create new `.mds/source/` and `.mds/test/` files. Prefer `mds new <name.lang.md> impl`, `mds new <name.lang.md> test`, and `mds new overview.md overview`. Never create managed scaffolding manually.
 
 ## mds Markdown Format
 
@@ -29,28 +30,25 @@ Source files live in `.mds/source/` as `name.{lang}.md` (e.g., `helper.ts.md` â†
 
 - One `.{lang}.md` file = one generated source file
 - All code blocks are concatenated (separated by blank lines) to produce the output
-- Import/use/require statements are forbidden in code blocks; record dependencies in the Imports section table
+- Normal import/use/require statements belong in code blocks when the implementation needs dependencies
 - Each code block must contain exactly one logical unit (type, function, class, impl, etc.) by default
 - Doc comments and docstrings belong in surrounding markdown text, not inside code blocks
 - `Purpose` documents every source md; `Contract` documents impl-state behavior
-- Source md without `Types` / `Source` code is spec state; adding generated code makes it impl state
-- `Exports.Summary` must describe the public definition; do not use `-`
-- Exported definitions referenced by other files need matching H5 shared definitions with prose
+- `API` summarizes the public surface in prose
+- Source md without `Source` code is spec state; adding generated code makes it impl state
+- New docs should not add Imports / Exports / Types tables
 
-### {{IMPORTS}} Section
+### Tableless Source Pattern
 
-| {{FROM}} | {{TARGET}} | {{SYMBOLS}} | {{VIA}} | {{SUMMARY}} | {{REFERENCE}} |
-| --- | --- | --- | --- | --- | --- |
-| internal | ./config | Config | - | Configuration module | [./config.ts.md#config](./config.ts.md#config) |
-| external | lodash | mapValues | - | Utility library | - |
+- Source docs use `Purpose`, `Contract`, `API`, `Source`, and `Cases`
+- Test docs use `Purpose`, `Covers`, `Cases`, and `Test`
 
 ### Constraints
 
 - One source md per feature
 - Keep executable test intent in `.mds/test/` with `Covers`
-- Generated output naming follows built-in language descriptors
+- Generated output naming follows package output rules and the active language descriptor
 - Code fence language must match file extension
-- Imports/use/require are forbidden in code blocks; record dependencies in the Imports section table
 - Default `mds lint` expects top-level implementations to be split per code fence; projects may relax selected checks in `[check]`
 - Project-specific rules override mds rules when they conflict
 

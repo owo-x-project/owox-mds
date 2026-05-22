@@ -1,9 +1,0 @@
-id = "rspec"
-match_prefixes = ["rspec", "bundle exec rspec"]
-
-[behavior]
-input = "stdin"
-append_file_arg = true
-
-[[behavior.diagnostics]]
-pattern = '^(?P<path>.+?):(?P<line>\d+):in .*: (?P<message>.+)$'

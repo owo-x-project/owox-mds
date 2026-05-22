@@ -1,9 +1,0 @@
-id = "nextest"
-match_prefixes = ["cargo nextest run"]
-
-[behavior]
-input = "stdin"
-append_file_arg = false
-
-[[behavior.diagnostics]]
-pattern = '^(?:error|warning)(?:\[[^\]]+\])?: (?P<message>.+)$'

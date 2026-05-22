@@ -1,9 +1,0 @@
-id = "dart-analyze-lint"
-match_prefixes = ["dart analyze", "flutter analyze"]
-
-[behavior]
-input = "stdin"
-append_file_arg = true
-
-[[behavior.diagnostics]]
-pattern = '^.+ - (?P<path>.+?):(?P<line>\d+):(?P<column>\d+) - (?P<message>.+)$'

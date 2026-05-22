@@ -1,9 +1,0 @@
-id = "pytest"
-match_prefixes = ["pytest", "uv run pytest", "poetry run pytest", "pdm run pytest", "hatch run pytest"]
-
-[behavior]
-input = "stdin"
-append_file_arg = true
-
-[[behavior.diagnostics]]
-pattern = '^(?P<path>.+?):(?P<line>\d+):(?:(?P<column>\d+):)? (?P<message>.+)$'

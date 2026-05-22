@@ -1,9 +1,0 @@
-id = "eslint"
-match_prefixes = ["eslint", "npx eslint"]
-
-[behavior]
-input = "tempfile"
-append_file_arg = true
-
-[[behavior.diagnostics]]
-pattern = '^(?:error: )?(?P<path>.+?):(?P<line>\d+):(?P<column>\d+): (?P<message>.+)$'

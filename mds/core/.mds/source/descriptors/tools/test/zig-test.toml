@@ -1,9 +1,0 @@
-id = "zig-test"
-match_prefixes = ["zig test"]
-
-[behavior]
-input = "stdin"
-append_file_arg = false
-
-[[behavior.diagnostics]]
-pattern = '^(?:error: )?(?P<message>.+)$'

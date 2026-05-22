@@ -1,0 +1,3 @@
+match_suffixes = ["d.ts"]
+primary_ext = "ts"
+root_module_markdown_names = ["index"]

@@ -1,9 +1,0 @@
-id = "biome-lint"
-match_prefixes = ["biome lint", "npx biome lint"]
-
-[behavior]
-input = "stdin"
-append_file_arg = true
-
-[[behavior.diagnostics]]
-pattern = '^(?:error: )?(?P<path>.+?):(?P<line>\d+):(?P<column>\d+): (?P<message>.+)$'

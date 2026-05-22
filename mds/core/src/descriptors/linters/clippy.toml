@@ -1,8 +1,0 @@
-id = "clippy"
-match_prefixes = ["cargo clippy", "clippy-driver"]
-
-[behavior]
-append_file_arg = false
-
-[[behavior.diagnostics]]
-pattern = '^(?:error: )?(?P<path>.+?):(?P<line>\d+):(?P<column>\d+): (?P<message>.+)$'
