@@ -492,6 +492,10 @@ fn test_source_overview_surfaces_fixed_heading_contract() {
 
 Source overview.
 
+{h2} Architecture
+
+Fixture architecture.
+
 {h3} Package Summary
 
 | Name | Version |
@@ -503,9 +507,6 @@ Source overview.
 | Name | Version | Summary |
 | --- | --- | --- |
 
-{h2} Rules
-
-- Keep package notes here.
 "#,
     );
 
@@ -523,7 +524,7 @@ Source overview.
         diags.iter().any(|diagnostic| {
             diagnostic
                 .message
-                .contains("source overview requires ## Architecture")
+                .contains("source overview requires ## Rules")
         }),
         "source overview should report required sections from core policy: {diags:?}"
     );

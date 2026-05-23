@@ -52,7 +52,7 @@ subproject: mds-cli
 - wizard の quality setup は language / tool 個別入力ではなく、`typecheck` `lint` `fix` `test` の semantic slot を基準にする。
 - quality slot は package manager、existing scripts、package config / schema 由来の候補から自動検出し、通常は確認だけ、必要な場合だけ advanced override を行う。
 - doctor 用の tool version floor は wizard の通常入力には含めず、`mds` 自身の version だけを config に自動記録する。
-- v1 clean bootstrap では、対象 root に package-local package manager manifest が無い場合でも、既存 `package.json` があり `packageManager` field と lockfile が npm と矛盾しなければ、`init` は `.mds/descriptors/package-managers/npm.toml` と `.mds/descriptors/languages/ts.toml` を起票して後続 planning と quality summary を進める。
+- v1 clean bootstrap では、対象 root に package-local package manager manifest が無い場合でも、既存 `package.json` があり `packageManager` field と lockfile が npm と矛盾しなければ、`init` は init-only seed から `.mds/descriptors/package-managers/npm.toml` と `.mds/descriptors/languages/ts.toml` を起票して後続 planning と quality summary を進める。この seed は runtime resolver の built-in fallback ではなく、書き出し後は package-local descriptor が正本になる。
 - npm 以外の package manager は、`init` 実行前に package-local package manager manifest を用意する。
 - `init` は `mds.config.toml`、source overview、初期 source/test 文書、必要に応じて AI kit を起票できる。
 - `init` は descriptor 不足時、言語固有 builtin 追加ではなく、`mds init descriptor <kind>` または descriptor source 追加を案内する。

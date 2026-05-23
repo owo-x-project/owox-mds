@@ -124,28 +124,37 @@ fn planned_package_overview_text(
     state: &mut RunState,
 ) -> Option<String> {
     let metadata = read_package_metadata(package, state)?;
+    let architecture =
+        architecture_section_bounds(text, path, &package.config.label_overrides, state)?;
     replace_managed_region(
         text,
         "package-summary",
         &package_summary_table(&metadata.name, &metadata.version),
         path,
+        architecture,
         state,
     )
     .and_then(|updated| {
+        let architecture =
+            architecture_section_bounds(&updated, path, &package.config.label_overrides, state)?;
         replace_managed_region(
             &updated,
             "dependencies",
             &dependency_table(&metadata.dependencies),
             path,
+            architecture,
             state,
         )
     })
     .and_then(|updated| {
+        let architecture =
+            architecture_section_bounds(&updated, path, &package.config.label_overrides, state)?;
         replace_managed_region(
             &updated,
             "dev-dependencies",
             &dependency_table(&metadata.dev_dependencies),
             path,
+            architecture,
             state,
         )
     })
@@ -163,9 +172,10 @@ fn replace_managed_region(
     name: &str,
     replacement: &str,
     path: &Path,
+    architecture: (usize, usize),
     state: &mut RunState,
 ) -> Option<String> {
-    replace_managed_section(text, name, replacement, path, state)
+    replace_managed_section(text, name, replacement, path, architecture, state)
 }
 
 fn replace_managed_section(
@@ -173,15 +183,20 @@ fn replace_managed_section(
     name: &str,
     replacement: &str,
     path: &Path,
+    architecture: (usize, usize),
     state: &mut RunState,
 ) -> Option<String> {
     let heading = format!("### {}", managed_section_heading(name));
     let lines = text.lines().collect::<Vec<_>>();
-    let Some(start) = lines.iter().position(|line| line.trim() == heading) else {
+    let Some(start) = lines[architecture.0..architecture.1]
+        .iter()
+        .position(|line| line.trim() == heading)
+        .map(|position| architecture.0 + position)
+    else {
         state.diagnostics.push(Diagnostic::error(
             Some(path.to_path_buf()),
             format!(
-                "source overview is missing managed section `{}`",
+                "source overview is missing managed section `{}` under ## Architecture before ## Rules",
                 managed_section_heading(name)
             ),
         ));
@@ -209,6 +224,48 @@ fn replace_managed_section(
         output.push('\n');
     }
     Some(output)
+}
+
+fn architecture_section_bounds(
+    text: &str,
+    path: &Path,
+    label_overrides: &HashMap<String, String>,
+    state: &mut RunState,
+) -> Option<(usize, usize)> {
+    let architecture_heading = format!(
+        "## {}",
+        label_overrides
+            .get("architecture")
+            .map(String::as_str)
+            .unwrap_or("Architecture")
+    );
+    let rules_heading = format!(
+        "## {}",
+        label_overrides
+            .get("rules")
+            .map(String::as_str)
+            .unwrap_or("Rules")
+    );
+    let lines = text.lines().collect::<Vec<_>>();
+    let Some(start) = lines
+        .iter()
+        .position(|line| line.trim() == architecture_heading)
+    else {
+        state.diagnostics.push(Diagnostic::error(
+            Some(path.to_path_buf()),
+            "source overview requires ## Architecture",
+        ));
+        return None;
+    };
+    let mut end = start + 1;
+    while end < lines.len() {
+        let trimmed = lines[end].trim();
+        if trimmed == rules_heading {
+            break;
+        }
+        end += 1;
+    }
+    Some((start + 1, end))
 }
 
 fn managed_section_boundary(line: &str) -> bool {

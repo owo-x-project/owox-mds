@@ -31,7 +31,7 @@ capability schema migration と v1 completion を単一の実行順へ統合し�
 
 ## 現状
 
-最終更新: 2026-05-22
+最終更新: 2026-05-23
 
 ### 検証済み
 
@@ -52,11 +52,14 @@ capability schema migration と v1 completion を単一の実行順へ統合し�
 - descriptor source / pack resolution は core に実装済み。package-local / workspace / local source / locked git cache path、origin metadata、collision diagnostics、source config / lock diagnostics を focused test で確認済み。
 - `mds init descriptor` と `mds descriptor check/explain/schema/sources` は CLI に実装済み。CLI integration test と representative command で確認済み。
 - repo docs の descriptor authoring guide / pack guide / stale runtime 前提整理は更新済み。
+- generated Markdown template の hidden HTML marker は削除済み。`mds init` / `mds new` / examples は可視 Markdown contract に従う。
+- package sync の managed section 更新は `Architecture` semantic section 以降、`Rules` semantic section 直前までの package overview 領域に限定し、`architecture` / `rules` label override も同じ semantic として扱う。
+- VS Code extension は LSP の resolved language registry command を primary source として使い、package-local / workspace shared / descriptor source 由来の言語解決と active context 表示をそろえる。
+- `mds init` の npm / TypeScript bootstrap descriptor は init-only seed として明文化済み。runtime resolver の built-in fallback ではなく、書き出された package-local descriptor が正本になる。
 
 ### 未完了 / v1 blocking 候補
 
-- VS Code bridge manual checklist は completion / hover / definition / references / rename / formatting / edit-backed code action / active language refresh / Markdown range remap を対象にする。未実施の場合は自動 gate 通過と混同せず、phase 12 残リスクとして記録する。
-- v1 completion の最終判定は、VS Code bridge manual checklist を実施するか、manual-only 残リスクとして明示承認した後に行う。
+- VS Code bridge manual checklist は completion / hover / definition / references / rename / formatting / edit-backed code action / active language refresh / Markdown range remap を対象にする。現時点では manual-only / non-blocking の残リスクとして扱い、自動 gate 通過と混同しない。
 
 ### Phase 状態
 
@@ -70,10 +73,10 @@ capability schema migration と v1 completion を単一の実行順へ統合し�
 | 06 core policy hardening | 部分完了 | overview、remap、link 周辺の代表確認は通過。最終 validation は phase 12。 |
 | 07 CLI and LSP adoption foundation | 完了 | init/new/LSP 基盤に加え、descriptor authoring CLI を実装済み。 |
 | 08 CLI coverage and LSP advanced surface | 完了 | descriptor CLI integration coverage を追加し、cargo test 通過。 |
-| 09 VS Code embedded foundation | 部分完了 | compile は通過。descriptor/config refresh は実装済み。 |
+| 09 VS Code embedded foundation | 完了 | LSP resolved language registry primary と descriptor/config refresh を実装済み。manual bridge UX は non-blocking checklist で別管理。 |
 | 10 VS Code diagnostics and coverage | 完了 | compile と diagnostics regression 通過。manual bridge UX は phase 12 の manual-only 項目。 |
 | 11 fixtures and runtime cleanup | 完了 | examples smoke 通過。descriptor source 前提への docs / cleanup 整合を更新済み。 |
-| 12 exit validation and doc closure | 部分完了 | final validation と docs closure は実施済み。VS Code manual checklist の実施または manual-only 残リスク承認が残る。 |
+| 12 exit validation and doc closure | 部分完了 | final validation と docs closure は実施済み。VS Code manual checklist は manual-only / non-blocking 残リスクとして記録済み。 |
 
 ## 依存関係
 

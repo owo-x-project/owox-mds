@@ -7,8 +7,9 @@
 - Active Context: manual-only / non-blocking / post-v1 evidence
 - Embedded Language Delegation: manual-only / non-blocking / post-v1 evidence
 - Diagnostic Mirror: manual-only / non-blocking / post-v1 evidence
-- phase 12 status: 未実施
+- phase 12 status: 未実施 / accepted manual-only risk
 - v1 blocking 判定: `npm --prefix editors/vscode run compile` と `npm --prefix editors/vscode run test:diagnostics-regression` を優先し、この checklist は補助証跡として扱う
+- active language registry 判定: VS Code 拡張は `mds.resolvedLanguages` を primary source とし、LSP unavailable 時だけ package-local descriptor discovery へ degrade する
 
 ## Active Context
 

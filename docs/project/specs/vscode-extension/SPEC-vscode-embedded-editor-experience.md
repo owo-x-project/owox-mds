@@ -42,7 +42,9 @@ VS Code 拡張が `mds file` に対して提供する language discovery、statu
 
 ## 挙動
 
-- 拡張は package config / schema、authoring root、file suffix、fence から active language を発見する。
+- 拡張は `mds-lsp` の resolved language registry command を primary source として active language を発見する。registry は core resolver と同じ package-local / workspace shared / descriptor source / lock 済み origin を反映する。
+- LSP registry が利用できない場合だけ、拡張は package-local descriptor TOML の軽量 discovery へ degrade できる。拡張独自の descriptor 解決順や外部 source semantics を正本にしてはならない。
+- 拡張は authoring root、file suffix、fence、cursor position から active language / doc kind を判定する。
 - `mds-markdown` file では、カーソル位置の active code block 言語と doc kind を判定できる。
 - status bar には少なくとも `mds <active-language> | <doc-kind>` を表示し、利用者が `mds file` であることと現在の言語文脈を把握できる。
 - embedded code に対しては virtual / shadow surface を使い、host editor の既存言語機能へ橋渡しする。
@@ -55,6 +57,7 @@ VS Code 拡張が `mds file` に対して提供する language discovery、statu
 ## 状態遷移 / 不変条件
 
 - active language indicator はカーソル移動に追従して更新されること。
+- descriptor source config / lock、workspace shared descriptor、package-local descriptor、package config の変更時は active language registry を refresh すること。
 - embedded result の text edit や location は `mds file` 上の位置に再対応付けされること。
 - bridge failure があっても Markdown 編集自体は継続できること。
 

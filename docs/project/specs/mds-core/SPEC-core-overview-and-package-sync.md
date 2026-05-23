@@ -37,7 +37,7 @@ subproject: mds-core
 
 - `mds-core` は `.mds/source/overview.md` を package 単位の必須 special file として扱う。
 - source overview は top-level visible section `## Purpose` `## Architecture` `## Rules` を必須で持つ。
-- source overview は `## Architecture` 配下に `### Package Summary` `### Dependencies` `### Dev Dependencies` の fixed visible heading managed section を必須で持つ。
+- source overview は `## Architecture` 以降、`## Rules` 直前までの package overview 領域に `### Package Summary` `### Dependencies` `### Dev Dependencies` の fixed visible heading managed section を必須で持つ。この領域には `## Exposes` などの追加 top-level section を含めてもよいが、`## Rules` 以降の narrative section は managed section 探索対象外とする。
 - top-level narrative section は authoring label preset / label override の対象にできる。
 - managed section heading は overview special file 契約の fixed anchor とし、label preset / label override / section title independence の対象外とする。
 - `mds package sync` は package metadata を読み、heading managed section だけを同期する。
@@ -50,6 +50,7 @@ subproject: mds-core
 - source overview は package ごとに 1 つ存在する。
 - source overview の top-level narrative section は `## Purpose` `## Architecture` `## Rules` である。
 - heading managed section 更新は package metadata に対して決定的である。
+- heading managed section 更新は `Architecture` / `Rules` semantic section の label override を尊重する。
 - manual prose は package sync で壊さない。
 - test overview は任意の補助文書であり、package sync の必須対象ではない。source/test overview path は package layout special file として扱い、descriptor `[[special_files]]` とは分離する。
 

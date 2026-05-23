@@ -36,6 +36,7 @@ const REMAP_GENERATED_LOCATIONS_COMMAND: &str = "mds.remapGeneratedLocations";
 const REMAP_GENERATED_RANGE_COMMAND: &str = "mds.remapGeneratedRange";
 const REMAP_GENERATED_TEXT_EDITS_COMMAND: &str = "mds.remapGeneratedTextEdits";
 const REMAP_GENERATED_TEXT_DOCUMENT_EDITS_COMMAND: &str = "mds.remapGeneratedTextDocumentEdits";
+const RESOLVED_LANGUAGES_COMMAND: &str = "mds.resolvedLanguages";
 
 #[derive(Debug, Deserialize)]
 struct ResolveGeneratedPositionParams {
@@ -65,6 +66,16 @@ struct RemapGeneratedTextDocumentEditsParams {
     documents: Vec<BridgeTextDocumentEdits>,
 }
 
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+struct ResolvedLanguageInfo {
+    id: String,
+    aliases: Vec<String>,
+    match_suffixes: Vec<String>,
+    primary_ext: String,
+    vscode_id: Option<String>,
+    package_root: String,
+}
+
 pub struct MdsLanguageServer {
     pub client: Client,
     pub state: SharedState,
@@ -77,6 +88,7 @@ fn bridge_commands() -> Vec<String> {
         REMAP_GENERATED_RANGE_COMMAND.to_string(),
         REMAP_GENERATED_TEXT_EDITS_COMMAND.to_string(),
         REMAP_GENERATED_TEXT_DOCUMENT_EDITS_COMMAND.to_string(),
+        RESOLVED_LANGUAGES_COMMAND.to_string(),
     ]
 }
 
@@ -178,6 +190,7 @@ fn execute_bridge_command(
                 .collect::<Vec<_>>();
             serde_json::to_value(remapped)
         }
+        RESOLVED_LANGUAGES_COMMAND => serde_json::to_value(resolved_languages(state)),
         _ => {
             return Err(invalid_params(format!(
                 "unsupported executeCommand `{}`",
@@ -188,6 +201,31 @@ fn execute_bridge_command(
     .map_err(|err| invalid_params(format!("failed to encode command result: {err}")))?;
 
     Ok(Some(result))
+}
+
+fn resolved_languages(state: &WorkspaceState) -> Vec<ResolvedLanguageInfo> {
+    let mut languages = Vec::new();
+    for package_state in &state.packages {
+        let package_root = package_state.package.root.clone();
+        for descriptor in mds_core::descriptor::resolved_language_descriptors(Some(&package_root)) {
+            languages.push(ResolvedLanguageInfo {
+                id: descriptor.id,
+                aliases: descriptor.aliases,
+                match_suffixes: descriptor.match_suffixes,
+                primary_ext: descriptor.primary_ext,
+                vscode_id: descriptor.vscode_id,
+                package_root: package_root.display().to_string(),
+            });
+        }
+    }
+    languages.sort_by(|left, right| {
+        left.package_root
+            .cmp(&right.package_root)
+            .then_with(|| left.id.cmp(&right.id))
+    });
+    languages
+        .dedup_by(|left, right| left.package_root == right.package_root && left.id == right.id);
+    languages
 }
 
 fn is_workspace_authoring_doc_path(state: &WorkspaceState, path: &Path) -> bool {
@@ -1110,6 +1148,7 @@ mod tests {
     use super::REMAP_GENERATED_LOCATIONS_COMMAND;
     use super::REMAP_GENERATED_TEXT_DOCUMENT_EDITS_COMMAND;
     use super::REMAP_GENERATED_TEXT_EDITS_COMMAND;
+    use super::RESOLVED_LANGUAGES_COMMAND;
     use crate::state::{
         resolve_active_language, resolve_authoring_doc, OpenFile, PackageState, WorkspaceIndex,
         WorkspaceState,
@@ -1193,6 +1232,13 @@ mod tests {
                 .commands
                 .contains(&REMAP_GENERATED_TEXT_DOCUMENT_EDITS_COMMAND.to_string()),
             "batch text edit remap command missing: {:?}",
+            execute_command_provider.commands
+        );
+        assert!(
+            execute_command_provider
+                .commands
+                .contains(&RESOLVED_LANGUAGES_COMMAND.to_string()),
+            "resolved language registry command missing: {:?}",
             execute_command_provider.commands
         );
     }

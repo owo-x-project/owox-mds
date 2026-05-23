@@ -47,6 +47,7 @@ related:
 - package-local descriptor は同一 id の upstream descriptor を置換または override できる。部分 merge を提供する場合、merge rule は field 単位で決定的でなければならない。
 - descriptor registry は各 descriptor の origin を保持し、doctor / explain / diagnostics で表示できる。
 - descriptor source の取得・更新・lock は mds の責務だが、descriptor の言語固有内容は mds 本体の責務ではない。
+- `mds init` の clean bootstrap seed は、package-local descriptor を生成するための authoring 初期値に限定する。resolver は seed を暗黙 fallback として読まず、生成後の `.mds/descriptors/**` または明示 descriptor source だけを registry 入力にする。
 
 ## 状態遷移 / 不変条件
 
@@ -68,7 +69,7 @@ related:
 
 - mds 本体は descriptor schema、解決順、lock、diagnostics、explain UX を所有し、言語固有 descriptor content を所有しない。
 - descriptor pack は template 集ではなく、再利用可能な descriptor source として扱う。
-- `mds init` は大量 template を package にコピーしない。必要な場合だけ package-local override または eject を生成する。
+- `mds init` は大量 template を package にコピーしない。必要な場合だけ package-local descriptor seed、override、または eject を生成する。
 - external descriptor source は v1 で必須の配布経路にできるが、mds 本体 repository に言語追加実装を要求しない。
 
 ## 検証観点

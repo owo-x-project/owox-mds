@@ -4291,6 +4291,37 @@ fn lint_rejects_source_overview_missing_fixed_heading() {
 }
 
 #[test]
+fn package_sync_scopes_managed_sections_to_architecture_label_override() {
+    let temp = TestDir::new();
+    write_fixture(temp.path());
+    fs::write(
+        temp.path().join("pkg/mds.config.toml"),
+        "[package]\nenabled = true\nallow_raw_source = false\n\n[labels]\narchitecture = \"Design\"\n",
+    )
+    .unwrap();
+    fs::write(
+        temp.path().join("pkg/.mds/source/overview.md"),
+        "# Overview\n\n## Purpose\n\nFixture package.\n\n## Design\n\nFixture architecture.\n\n### Package Summary\n\n| Name | Version |\n| --- | --- |\n| fixture | 0.1.0 |\n\n### Dev Dependencies\n\n| Name | Version | Summary |\n| --- | --- | --- |\n\n## Rules\n\n- Fixture rules.\n\n## Notes\n\n### Dependencies\n\nThis heading is narrative content, not the managed dependency snapshot.\n",
+    )
+    .unwrap();
+
+    let check = execute(CliRequest {
+        cwd: temp.path().to_path_buf(),
+        package: None,
+        verbose: false,
+        command: Command::Lint {
+            fix: false,
+            check: false,
+        },
+    });
+
+    assert_eq!(check.exit_code, 1);
+    assert!(check
+        .stderr
+        .contains("source overview is missing managed section `Dependencies`"));
+}
+
+#[test]
 fn lint_rejects_source_overview_missing_required_section() {
     let temp = TestDir::new();
     write_fixture(temp.path());

@@ -22,6 +22,8 @@ import {
 
 let client: LanguageClient | undefined;
 
+const RESOLVED_LANGUAGES_COMMAND = 'mds.resolvedLanguages';
+
 // ============================================================
 // Language Registry
 // ============================================================
@@ -37,6 +39,15 @@ interface LanguageInfo {
   markdownSuffixes: string[];
   /** Virtual file extension for embedded docs (e.g., '.ts') */
   virtualExt: string;
+}
+
+interface ResolvedLanguageInfo {
+  id: string;
+  aliases: string[];
+  match_suffixes: string[];
+  primary_ext: string;
+  vscode_id?: string;
+  package_root: string;
 }
 
 let LANGUAGE_REGISTRY: Record<string, LanguageInfo> = {};
@@ -262,6 +273,37 @@ function languageInfoFromDescriptor(text: string): LanguageInfo | undefined {
   };
 }
 
+function languageInfoFromResolvedDescriptor(language: ResolvedLanguageInfo): LanguageInfo {
+  const labels = [...new Set([
+    language.id,
+    ...language.aliases,
+    language.primary_ext,
+    ...language.match_suffixes,
+  ].filter((label) => label.length > 0))];
+  const markdownSuffixes = language.match_suffixes.length > 0
+    ? language.match_suffixes
+    : [language.primary_ext];
+  return {
+    ext: `.${language.primary_ext}.md`,
+    languageId: language.vscode_id || language.id,
+    labels,
+    markdownSuffixes,
+    virtualExt: `.${language.primary_ext}`,
+  };
+}
+
+async function discoverLanguagesFromLsp(): Promise<LanguageInfo[] | undefined> {
+  const languages = await executeBridgeCommand<ResolvedLanguageInfo[]>(
+    RESOLVED_LANGUAGES_COMMAND,
+    {}
+  );
+  if (!languages || languages.length === 0) {
+    return undefined;
+  }
+  resetLanguageRegistry();
+  return registerDiscoveredLanguages(languages.map(languageInfoFromResolvedDescriptor));
+}
+
 function stringField(text: string, key: string): string | undefined {
   return text.match(new RegExp(`^${key}\\s*=\\s*"([^"]+)"`, 'm'))?.[1];
 }
@@ -352,7 +394,7 @@ function isInTestRoot(fsPath: string, authoringRoots: AuthoringRoots): boolean {
 }
 
 function languageDisplayLabel(language: LanguageInfo): string {
-  return language.labels[0] || language.languageId || language.virtualExt.replace(/^\./, '');
+  return language.languageId || language.labels[0] || language.virtualExt.replace(/^\./, '');
 }
 
 function resolvePathFallbackLanguage(
@@ -527,7 +569,7 @@ function parseCodeBlocks(document: vscode.TextDocument): CodeBlock[] {
         inBlock = true;
         fenceLen = opened.markerLen;
         langId = info?.languageId || normalizedLabel;
-        langLabel = info ? info.labels[0] || 'unknown' : 'unknown';
+        langLabel = info ? languageDisplayLabel(info) : 'unknown';
         vExt = info?.virtualExt || `.${normalizedLabel}`;
         start = i + 1;
       }
@@ -2260,7 +2302,8 @@ async function refreshDiscoveredWorkspaceContext(
   runtimeState: ExtensionRuntimeState,
   statusBar?: ActiveContextStatusBarController
 ): Promise<void> {
-  runtimeState.activeLanguages = await discoverLanguages(config);
+  runtimeState.activeLanguages = await discoverLanguagesFromLsp()
+    || await discoverLanguages(config);
   runtimeState.authoringRoots = await discoverAuthoringRoots();
   await associateOpenMdsDocuments(runtimeState.authoringRoots);
   statusBar?.refresh();
@@ -2320,11 +2363,17 @@ export async function activate(context: vscode.ExtensionContext) {
   const sourceAuthoringWatcher = vscode.workspace.createFileSystemWatcher('**/.mds/source/**/*.md');
   const testAuthoringWatcher = vscode.workspace.createFileSystemWatcher('**/.mds/test/**/*.md');
   const descriptorWatcher = vscode.workspace.createFileSystemWatcher('**/.mds/descriptors/**/*.toml');
+  const sharedDescriptorWatcher = vscode.workspace.createFileSystemWatcher('**/.mds/{shared,workspace}/descriptors/**/*.toml');
+  const descriptorSourceConfigWatcher = vscode.workspace.createFileSystemWatcher('**/.mds/descriptor-sources.toml');
+  const descriptorSourceLockWatcher = vscode.workspace.createFileSystemWatcher('**/.mds/descriptor-sources.lock');
   const fileEvents = [
     configWatcher,
     sourceAuthoringWatcher,
     testAuthoringWatcher,
     descriptorWatcher,
+    sharedDescriptorWatcher,
+    descriptorSourceConfigWatcher,
+    descriptorSourceLockWatcher,
   ];
   context.subscriptions.push(...fileEvents);
 
@@ -2361,7 +2410,16 @@ export async function activate(context: vscode.ExtensionContext) {
     configWatcher.onDidDelete(refreshWorkspaceContext),
     descriptorWatcher.onDidCreate(refreshWorkspaceContext),
     descriptorWatcher.onDidChange(refreshWorkspaceContext),
-    descriptorWatcher.onDidDelete(refreshWorkspaceContext)
+    descriptorWatcher.onDidDelete(refreshWorkspaceContext),
+    sharedDescriptorWatcher.onDidCreate(refreshWorkspaceContext),
+    sharedDescriptorWatcher.onDidChange(refreshWorkspaceContext),
+    sharedDescriptorWatcher.onDidDelete(refreshWorkspaceContext),
+    descriptorSourceConfigWatcher.onDidCreate(refreshWorkspaceContext),
+    descriptorSourceConfigWatcher.onDidChange(refreshWorkspaceContext),
+    descriptorSourceConfigWatcher.onDidDelete(refreshWorkspaceContext),
+    descriptorSourceLockWatcher.onDidCreate(refreshWorkspaceContext),
+    descriptorSourceLockWatcher.onDidChange(refreshWorkspaceContext),
+    descriptorSourceLockWatcher.onDidDelete(refreshWorkspaceContext)
   );
 
   // Invalidate code block cache on document changes
@@ -2417,6 +2475,7 @@ export async function activate(context: vscode.ExtensionContext) {
   await associateOpenMdsDocuments(runtimeState.authoringRoots);
 
   await client.start();
+  await refreshDiscoveredWorkspaceContext(config, runtimeState, activeContextStatusBar);
   registerMirroredDiagnostics(context);
 }
 

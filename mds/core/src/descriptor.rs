@@ -151,6 +151,16 @@ pub struct DescriptorRegistryReport {
     pub diagnostics: Vec<Diagnostic>,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct ResolvedLanguageDescriptor {
+    pub id: String,
+    pub aliases: Vec<String>,
+    pub match_suffixes: Vec<String>,
+    pub primary_ext: String,
+    pub vscode_id: Option<String>,
+    pub origin: DescriptorOrigin,
+}
+
 #[derive(Debug, Clone)]
 struct DescriptorSource {
     id: String,
@@ -212,6 +222,8 @@ pub(crate) struct SpecialFileRule {
 #[derive(Debug, Clone, Deserialize)]
 pub(crate) struct LanguageSection {
     pub primary_ext: String,
+    #[serde(default)]
+    pub vscode_id: Option<String>,
     #[serde(default)]
     pub root_module_markdown_names: Vec<String>,
 }
@@ -1452,6 +1464,29 @@ pub fn descriptor_origin_for_key(key: &str) -> Option<DescriptorOrigin> {
 
 pub(crate) fn language_descriptors() -> Vec<Descriptor> {
     registry().descriptors()
+}
+
+pub fn resolved_language_descriptors(root: Option<&Path>) -> Vec<ResolvedLanguageDescriptor> {
+    with_workspace_descriptor_root(root, || {
+        let registry = registry();
+        let mut descriptors = registry
+            .descriptors()
+            .into_iter()
+            .filter_map(|descriptor| {
+                let origin = registry.origins.get(&descriptor.id)?.clone();
+                Some(ResolvedLanguageDescriptor {
+                    id: descriptor.id,
+                    aliases: descriptor.aliases,
+                    match_suffixes: descriptor.match_suffixes,
+                    primary_ext: descriptor.language.primary_ext,
+                    vscode_id: descriptor.language.vscode_id,
+                    origin,
+                })
+            })
+            .collect::<Vec<_>>();
+        descriptors.sort_by(|left, right| left.id.cmp(&right.id));
+        descriptors
+    })
 }
 
 pub fn lang_for_markdown_path(path: &Path) -> Option<Lang> {
