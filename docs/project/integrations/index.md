@@ -27,4 +27,4 @@
 
 ## 参照
 
-- `github-distribution.md`: GitHub Releases / raw install script による配布経路
+- `github-distribution.md`: GitHub Releases / raw install script による配布経路と Release tag 由来 version の扱い

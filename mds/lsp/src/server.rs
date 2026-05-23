@@ -37,6 +37,10 @@ const REMAP_GENERATED_RANGE_COMMAND: &str = "mds.remapGeneratedRange";
 const REMAP_GENERATED_TEXT_EDITS_COMMAND: &str = "mds.remapGeneratedTextEdits";
 const REMAP_GENERATED_TEXT_DOCUMENT_EDITS_COMMAND: &str = "mds.remapGeneratedTextDocumentEdits";
 const RESOLVED_LANGUAGES_COMMAND: &str = "mds.resolvedLanguages";
+const VERSION: &str = match option_env!("MDS_RELEASE_VERSION") {
+    Some(version) if !version.is_empty() => version,
+    _ => env!("CARGO_PKG_VERSION"),
+};
 
 #[derive(Debug, Deserialize)]
 struct ResolveGeneratedPositionParams {
@@ -790,7 +794,7 @@ impl LanguageServer for MdsLanguageServer {
             capabilities: server_capabilities(),
             server_info: Some(ServerInfo {
                 name: "mds-lsp".to_string(),
-                version: Some(env!("CARGO_PKG_VERSION").to_string()),
+                version: Some(VERSION.to_string()),
             }),
         })
     }

@@ -13,6 +13,7 @@
 
 - `mds-core` `mds-cli` `mds-lsp` を変更したら、少なくとも対象 crate の build と test を確認する。
 - `editors/vscode` を変更したら、repo root から `rtk npm --prefix editors/vscode run compile` を通す。diagnostic mirror を変えたら `rtk npm --prefix editors/vscode run test:diagnostics-regression` も確認する。
+- GitHub Release 配布経路を変えたら、tag 由来 `MDS_RELEASE_VERSION` を注入した `mds --version` が Release tag と一致すること、VS Code package version が tag から期待どおり正規化されること、Release workflow 内に同じ検査があることを確認する。
 - 生成、config、schema、quality、source map 挙動を変えたら、少なくとも `examples/minimal-ts` を使って `package sync --check` / `build` / `lint` と package-local `npm run typecheck` / `npm run test` を確認する。v1 success-path fixture の `mds typecheck` / `mds test` は config-disabled surface の success / no-op 確認として別に位置づける。`mds-cli` 経由の example command は対象 package directory から `--package .` で実行し、repo root の `mds.config.toml` を base config として読ませない。
 - `overview.md` / package sync 契約を変えたら、`.mds/source/overview.md` special file の fixed heading `### Package Summary` `### Dependencies` `### Dev Dependencies` と `package sync --check` / write mode の差分を focused test で確認する。managed section は `Architecture` semantic section 以降、`Rules` semantic section 直前までの package overview 領域だけを更新し、`architecture` / `rules` label override を使う package でも同じ semantic 境界で確認する。
 - 仕様更新や authoring 体験変更がある場合、対応する `examples/` を必ず更新し、開発者体験と使いやすさをレビューする。

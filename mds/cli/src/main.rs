@@ -9,7 +9,10 @@ use mds_core::CliRequest;
 use mds_core::Command;
 use std::io::IsTerminal;
 use std::process::{Command as ProcessCommand, Stdio};
-const VERSION: &str = env!("CARGO_PKG_VERSION");
+const VERSION: &str = match option_env!("MDS_RELEASE_VERSION") {
+    Some(version) if !version.is_empty() => version,
+    _ => env!("CARGO_PKG_VERSION"),
+};
 
 fn main() -> std::process::ExitCode {
     run()
