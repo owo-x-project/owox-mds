@@ -53,7 +53,14 @@ jobs:
           targets: ${{ matrix.target }}
 
       - name: Build CLI and LSP
-        run: cargo build --release --target ${{ matrix.target }} -p mds-cli -p mds-lsp
+        shell: bash
+        run: |
+          source ./.github/script/release-version.sh
+          release_version="$(release_version_from_ref "${GITHUB_REF_NAME:-}")"
+          if [[ -n "$release_version" ]]; then
+            export MDS_RELEASE_VERSION="$release_version"
+          fi
+          cargo build --release --target ${{ matrix.target }} -p mds-cli -p mds-lsp
 
       - name: Stage binaries
         shell: bash
@@ -61,6 +68,15 @@ jobs:
           mkdir -p dist release-assets
           cp "target/${{ matrix.target }}/release/mds${{ matrix.exe_suffix }}" "dist/mds${{ matrix.exe_suffix }}"
           cp "target/${{ matrix.target }}/release/mds-lsp${{ matrix.exe_suffix }}" "dist/mds-lsp${{ matrix.exe_suffix }}"
+
+      - name: Verify release binary version
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          source ./.github/script/release-version.sh
+          expected="$(release_version_from_ref "${GITHUB_REF_NAME:-}")"
+          actual="$(dist/mds${{ matrix.exe_suffix }} --version)"
+          test "$actual" = "mds $expected"
 
       - name: Package Unix archive
         if: matrix.archive_ext == 'tar.gz'
@@ -156,6 +172,15 @@ jobs:
             args+=(--pre-release)
           fi
           ./.github/script/package-vscode.sh "${args[@]}"
+
+      - name: Verify VSIX package version
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          source ./.github/script/release-version.sh
+          expected="$(vscode_package_version_from_release_version "${GITHUB_REF_NAME:-}")"
+          actual="$(node -p "require('./.build/node/vscode/package/package.json').version")"
+          test "$actual" = "$expected"
 
       - name: Upload VSIX artifact
         uses: actions/upload-artifact@v4

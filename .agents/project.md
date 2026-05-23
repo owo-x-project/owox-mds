@@ -1,35 +1,26 @@
 # Project
 
 ## Name
-mds
+owox-mds
 
 ## Description
-Markdown を設計書兼ソースの正本として扱い、多言語コード・型・テストを生成する強規約ツールチェーン。
+Markdown を実装正本にする `mds` の monorepo。Rust workspace を中心に、コード生成 core、CLI、LSP、VS Code 拡張、動作確認用 examples を含む。
 
 ## Language
-Rust, TypeScript, Python
+Rust, TypeScript, Markdown, TOML
 
 ## Kind
 monorepo
 
 ## Subprojects
-- `mds-core`: Rust core library package; Markdown source lives in `mds/core/src-md`
-- `mds-cli`: native CLI package; Markdown source lives in `mds/cli/src-md`
-- `mds-lsp`: Language Server Protocol package; Markdown source lives in `mds/lsp/src-md`
-- `editors/vscode`: VS Code extension package; Markdown source context lives in `editors/vscode/src-md`
+- `mds-core`: Markdown 実装文書の解析、descriptor、config、package 発見、生成計画、quality 実行を担う core library
+- `mds-cli`: `mds` コマンド、対話式 init、self-update を提供する CLI
+- `mds-lsp`: Markdown 実装文書向け診断、補完、ナビゲーション、source map 連携を提供する LSP
+- `vscode-extension`: VS Code 上で `mds` authoring と `mds-lsp` 接続を提供する editor extension
+- `examples`: TypeScript / Python / Rust の最小サンプル群。仕様確認と開発者体験レビュー用
 
 ## Teams
-- Rust implementation team
-- TypeScript implementation team
-- Python implementation team
+- `platform`: `mds` 本体、editor tooling、examples、関連 docs の保守を担うチーム
 
 ## Integrations
-- Claude Code
-- Codex CLI
-- Opencode
-- GitHub Copilot CLI
-
-## Validation Policy
-- `mds/core`、`mds/cli`、`mds/lsp` など mds 管理 package の build / test / lint は mds command を入口にする。
-- 通常は `mds package sync`、`mds build`、`mds lint --package <package>`、`mds test --package <package>` を使う。
-- Cargo 直実行は mds CLI 起動不能時の bootstrap、release binary 作成、mds 管理外 Rust workspace 検証に限る。
+- `github-distribution`: GitHub Releases と raw `install.sh` を使う配布・自己更新経路

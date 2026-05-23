@@ -3,13 +3,16 @@
 # This file defines the artifacts, checksums, and supply-chain metadata
 # required by `mds release check` before publishing.
 #
-# See: mds/core/.mds/source/release_quality.rs.md and docs/project/tech-stack.md
+# See: docs/project/tech-stack.md and docs/project/validation.md
 #
 # Usage:
 #   ./.github/script/release-check.sh --manifest release.mds.toml --verbose
 #
 # Prerequisites:
-#   cargo run -p mds-cli -- build --verbose && ./.github/script/sync-self-hosted-rust.sh && cd .build/rust && cargo build --release
+#   cargo build --workspace --release
+#   cargo package --allow-dirty --no-verify -p mds-core
+#   mds-core must already be published on crates.io before mds-cli and
+#   mds-lsp release artifacts can be generated.
 #   ./.github/script/generate-release-artifacts.sh
 #
 # Cargo publish order (依存順):
@@ -20,8 +23,9 @@
 #   4. mds-cli        (mds-core に依存)
 #   5. mds-lsp        (mds-core に依存)
 #
-# Note: mds-cli and mds-lsp require mds-core to be published on crates.io
-# before their .crate files can be produced via `cargo package`.
+# Note: release packaging reads `.crate` files from the root Cargo workspace
+# under `target/package/`. mds-cli and mds-lsp still require mds-core to be
+# published on crates.io before their `cargo package` step can succeed.
 # The CI workflow handles this sequential ordering automatically,
 # including a dry-run verification step after mds-core is published.
 #
@@ -30,10 +34,12 @@
 #   npx @vscode/vsce publish --pre-release
 #
 # Full workflow:
-#   1. cargo run -p mds-cli -- build --verbose && ./.github/script/sync-self-hosted-rust.sh && cd .build/rust && cargo build --release
-#   2. ./.github/script/generate-release-artifacts.sh [--sign]
-#   3. ./.github/script/release-check.sh --manifest release.mds.toml --verbose
-#   4. Publish in order (CI handles automatically)
+#   1. cargo build --workspace --release
+#   2. cargo package --allow-dirty --no-verify -p mds-core
+#   3. Publish mds-core and wait for crates.io index update
+#   4. ./.github/script/generate-release-artifacts.sh [--sign]
+#   5. ./.github/script/release-check.sh --manifest release.mds.toml --verbose
+#   6. Publish remaining crates in order (CI handles automatically)
 
 [release]
 version = "0.2.1-alpha"
@@ -44,7 +50,7 @@ channel = "alpha"
 [[artifacts]]
 name = "mds-core"
 channel = "alpha"
-path = ".build/rust/target/package/mds-core-0.2.1-alpha.crate"
+path = "target/package/mds-core-0.2.1-alpha.crate"
 checksum = ".build/release/checksums/mds-core-0.2.1-alpha.sha256"
 signature = ".build/release/signatures/mds-core-0.2.1-alpha.sig"
 sbom = ".build/release/sbom/mds-core-0.2.1-alpha.spdx.json"
@@ -54,7 +60,7 @@ smoke = true
 [[artifacts]]
 name = "mds-cli"
 channel = "alpha"
-path = ".build/rust/target/package/mds-cli-0.2.1-alpha.crate"
+path = "target/package/mds-cli-0.2.1-alpha.crate"
 checksum = ".build/release/checksums/mds-cli-0.2.1-alpha.sha256"
 signature = ".build/release/signatures/mds-cli-0.2.1-alpha.sig"
 sbom = ".build/release/sbom/mds-cli-0.2.1-alpha.spdx.json"
@@ -65,7 +71,7 @@ requires_published = "mds-core"
 [[artifacts]]
 name = "mds-lsp"
 channel = "alpha"
-path = ".build/rust/target/package/mds-lsp-0.2.1-alpha.crate"
+path = "target/package/mds-lsp-0.2.1-alpha.crate"
 checksum = ".build/release/checksums/mds-lsp-0.2.1-alpha.sha256"
 signature = ".build/release/signatures/mds-lsp-0.2.1-alpha.sig"
 sbom = ".build/release/sbom/mds-lsp-0.2.1-alpha.spdx.json"

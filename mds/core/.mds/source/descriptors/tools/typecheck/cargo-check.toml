@@ -1,9 +1,0 @@
-id = "cargo-check"
-match_prefixes = ["cargo check"]
-
-[behavior]
-input = "stdin"
-append_file_arg = false
-
-[[behavior.diagnostics]]
-pattern = '^(?:error|warning)(?:\[[^\]]+\])?: (?P<message>.+)$'

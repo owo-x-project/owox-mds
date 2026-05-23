@@ -1,9 +1,0 @@
-id = "ctest"
-match_prefixes = ["ctest"]
-
-[behavior]
-input = "stdin"
-append_file_arg = false
-
-[[behavior.diagnostics]]
-pattern = '^(?:\d+/\d+ Test #\d+: )?(?P<message>.+)$'

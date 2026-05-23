@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+source "$ROOT/.github/script/release-version.sh"
 SOURCE_DIR="$ROOT/editors/vscode"
 BUILD_DIR="$ROOT/.build/node/vscode"
 PACKAGE_DIR="$BUILD_DIR/package"
@@ -50,7 +51,12 @@ mkdir -p "$PACKAGE_DIR" "$BUILD_DIR"
 (cd "$SOURCE_DIR" && npm run compile)
 
 cp "$SOURCE_DIR/package.json" "$PACKAGE_DIR/package.json"
-PACKAGE_VERSION="$PACKAGE_VERSION" node -e "const fs=require('fs'); const p='${PACKAGE_DIR}/package.json'; const explicitVersion=process.env.PACKAGE_VERSION; const pkg=require(p); if (pkg.scripts) delete pkg.scripts.vscode_prepublish; if (pkg.scripts) delete pkg.scripts['vscode:prepublish']; const rawVersion=String(explicitVersion || pkg.version).replace(/^v/, ''); const versionMatch=rawVersion.match(/^(\d+\.\d+\.\d+)/); if (!versionMatch) { throw new Error('Invalid VS Code extension version source: ' + rawVersion); } pkg.version = versionMatch[1]; fs.writeFileSync(p, JSON.stringify(pkg, null, 2) + '\n');"
+if [[ -n "$PACKAGE_VERSION" ]]; then
+  VSCODE_VERSION="$(vscode_package_version_from_release_version "$PACKAGE_VERSION")"
+else
+  VSCODE_VERSION="$(vscode_package_version_from_release_version "$(node -p "require('$SOURCE_DIR/package.json').version")")"
+fi
+PACKAGE_VERSION="$VSCODE_VERSION" node -e "const fs=require('fs'); const p='${PACKAGE_DIR}/package.json'; const pkg=require(p); if (pkg.scripts) delete pkg.scripts.vscode_prepublish; if (pkg.scripts) delete pkg.scripts['vscode:prepublish']; pkg.version = process.env.PACKAGE_VERSION; fs.writeFileSync(p, JSON.stringify(pkg, null, 2) + '\n');"
 cp "$SOURCE_DIR/README.md" "$PACKAGE_DIR/README.md"
 cp "$SOURCE_DIR/CHANGELOG.md" "$PACKAGE_DIR/CHANGELOG.md"
 cp "$SOURCE_DIR/LICENSE" "$PACKAGE_DIR/LICENSE"
@@ -58,7 +64,7 @@ cp "$SOURCE_DIR/language-configuration.json" "$PACKAGE_DIR/language-configuratio
 cp "$SOURCE_DIR/.vscodeignore" "$PACKAGE_DIR/.vscodeignore"
 cp -R "$SOURCE_DIR/snippets" "$PACKAGE_DIR/snippets"
 cp -R "$SOURCE_DIR/syntaxes" "$PACKAGE_DIR/syntaxes"
-cp -R "$BUILD_DIR/out" "$PACKAGE_DIR/out"
+cp -R "$SOURCE_DIR/out" "$PACKAGE_DIR/out"
 
 if [[ -n "$LSP_BINARY" ]]; then
   if [[ -z "$TARGET" ]]; then

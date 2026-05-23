@@ -1,67 +1,24 @@
-<p align="center">
-	<img src=".github/assets/readme-header.png" alt="markdown source" width="720">
-</p>
+# owox-mds
 
-# mds
+`owox-mds` は Markdown を実装正本として扱う `mds` の monorepo。
 
-> *This document was translated from [Japanese](README.ja.md) by AI.*
+## 含むもの
 
-mds is a development toolchain that treats Markdown as the source of truth for both design and implementation.
+- `mds/core`: 解析、生成、quality、descriptor を担う core library
+- `mds/cli`: `mds` CLI
+- `mds/lsp`: `mds-lsp` language server
+- `editors/vscode`: VS Code extension
+- `examples`: TypeScript / Python / Rust の最小サンプル
 
-Write real code — TypeScript, Python, Rust — inside Markdown code blocks, then extract them as executable source files with `mds build`. Because the code in Markdown is the actual running code, design intent and implementation always stay in sync.
+## descriptor 方針
 
-## Features
+v1 の `mds` 本体は language / tool / package-manager 固有 descriptor content を所有しない。package-local descriptor、workspace shared descriptor、lock 済み descriptor source から registry を組み立てる。
 
-- Generate `.ts`, `.py`, `.rs` files from `Types`, `Source`, `Test` code blocks in Markdown
-- `mds lint` validates Markdown structure and runs configured linters against code in Markdown
-- `mds typecheck` / `mds test` runs type checks and tests against code in Markdown
-- `mds init` initializes a project with an interactive wizard
+descriptor の作成、検証、override、source pack 化は `docs/project/specs/shared/GUIDE-descriptor-authoring.md` を入口にする。代表 command は `mds init descriptor` と `mds descriptor check/explain/schema/sources`。
 
-## Quick Start
+## project docs
 
-```bash
-# Install the latest GitHub Releases binary
-curl -fsSL https://raw.githubusercontent.com/owo-x-project/owox-mds/latest/install.sh | sh
-
-# Basic usage
-mds init --package ./path/to/package
-mds lint --package ./path/to/package
-mds typecheck --package ./path/to/package
-mds build --package ./path/to/package
-```
-
-VS Code extension: `code --install-extension owo-x-project.mds`
-
-The installer downloads the platform-specific GitHub Releases archive and installs both `mds` and `mds-lsp`. The Marketplace VS Code extension already includes the matching `mds-lsp` binary, so no separate LSP install is needed for VS Code.
-
-See [examples/](examples/) for minimal working configurations.
-
-## Requirements
-
-No runtime dependencies for the prebuilt `mds` CLI binary. Language-specific checks still use the toolchain configured for that language, such as Node.js, Python, or Rust.
-
-## Documentation
-
-| Audience | Entry point |
-| --- | --- |
-| **Users** | [Wiki (EN)](docs/wiki/en/index.md) — Getting started, commands, configuration, generation, troubleshooting |
-| **Contributors** | [CONTRIBUTING.md](CONTRIBUTING.md) — Setup, dev workflow, testing |
-
-[日本語版 README](README.ja.md) | [日本語 Wiki](docs/wiki/ja/index.md)
-
-### Key links
-
-- [Getting Started](docs/wiki/en/getting-started.md) — Prerequisites and minimal setup
-- [Commands](docs/wiki/en/commands.md) — Full command reference
-- [Descriptor Guide](docs/wiki/en/descriptors.md) — Language, quality tool, and package manager TOML guide
-- [Development Guide](docs/wiki/en/development.md) — Build, test, debug
-- [AI Agent Integration](docs/wiki/en/ai-agent-integration.md) — Claude Code, Codex, Opencode, GitHub Copilot
-- [Editor Integration (LSP)](docs/wiki/en/editor-integration.md) — VS Code extension, Neovim, real-time diagnostics
-
-## Contributing
-
-Bug reports, documentation improvements, and implementation improvements are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
-
-## License
-
-MIT License. See [LICENSE](LICENSE) for details.
+- project 正本: `docs/project/`
+- 最初に読む資料: `docs/project/index.md`
+- descriptor authoring guide: `docs/project/specs/shared/GUIDE-descriptor-authoring.md`
+- AI 用 project 定義: `.agents/project.md`

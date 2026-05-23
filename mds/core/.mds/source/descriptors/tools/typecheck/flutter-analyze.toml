@@ -1,9 +1,0 @@
-id = "flutter-analyze"
-match_prefixes = ["flutter analyze"]
-
-[behavior]
-input = "stdin"
-append_file_arg = true
-
-[[behavior.diagnostics]]
-pattern = '^.+ - (?P<path>.+?):(?P<line>\d+):(?P<column>\d+) - (?P<message>.+)$'

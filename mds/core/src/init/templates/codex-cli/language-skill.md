@@ -8,37 +8,20 @@ Use this when editing `.mds/source/**/*.{{LANG_SUFFIXES}}.md` for descriptor `{{
 
 ## Best Practices
 
-- Put dependencies in `## {{IMPORTS}}`; do not write import/use/require/include/using statements in code fences.
-- Put public API metadata in `## {{EXPORTS}}` and add H5 anchors for imported shared definitions.
-- Keep source md in spec state without generated code until implementation is ready; adding `{{SOURCE}}` / `{{TYPES}}` code makes it impl state.
-- Do not use `-` for `{{EXPORTS}}.{{SUMMARY}}`; explain the definition.
+- Write dependency imports and public entrypoints directly in `{{SOURCE}}` code fences using normal language syntax.
+- Use prose sections such as `{{PURPOSE}}`, `{{CONTRACT}}`, `API`, and `{{CASES}}` to explain behavior instead of Imports / Exports / Types tables.
+- Keep source md in spec state without generated code until implementation is ready; adding `{{SOURCE}}` code makes it impl state.
 - Keep one feature per implementation md and one top-level logical unit per code fence.
 - Keep doc comments and docstrings in Markdown prose outside generated code fences.
 
-## Imports
+## Code Example
 
-```markdown
-| {{FROM}} | {{TARGET}} | {{SYMBOLS}} | {{VIA}} | {{SUMMARY}} | {{REFERENCE}} |
-| --- | --- | --- | --- | --- | --- |
-{{IMPORT_ROW}}
-```
-
-Generated import example:
+Write dependencies in the code fence itself when the implementation needs them.
 
 ```{{FENCE_LANG}}
 {{GENERATED_IMPORT}}
 ```
 
-## Exports
-
-```markdown
-| {{NAME}} | {{VISIBILITY}} | {{SUMMARY}} |
-| --- | --- | --- |
-| exported_name | public | Stable public entrypoint. |
-
-##### exported-name
-
-Link target for other mds files.
-```
+Describe the public API in prose and keep the actual public definitions in the same code fence as the implementation.
 
 Run `mds lint`, `mds build --dry-run`, `mds build`, and `mds test` after edits.

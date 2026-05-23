@@ -1,9 +1,0 @@
-id = "typeprof"
-match_prefixes = ["typeprof", "bundle exec typeprof"]
-
-[behavior]
-input = "stdin"
-append_file_arg = true
-
-[[behavior.diagnostics]]
-pattern = '^(?P<path>.+?):(?P<line>\d+):(?P<column>\d+): (?P<message>.+)$'

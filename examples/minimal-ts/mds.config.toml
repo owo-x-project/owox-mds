@@ -4,13 +4,22 @@ enabled = true
 allow_raw_source = false
 
 [roots]
-source = "src"
-types = "src"
-test = "tests"
+source_md = ".mds/source"
+test_md = ".mds/test"
+source_out = "src"
+test_out = "tests"
+
+[authoring]
+link_policy = "wiki-only"
+
+[output]
+source = "{source_out}/{module}.{ext}"
+test = "{test_out}/{module}.test.{ext}"
 
 [quality.ts]
-linter = ""
-fixer = "prettier --write"
-test_runner = ""
-required = ["node", "eslint", "prettier", "vitest"]
+linter = "npx --no-install prettier --check"
+fixer = "npx --no-install prettier --write"
+type_checker = false
+test_runner = false
+required = ["node", "npx"]
 optional = []

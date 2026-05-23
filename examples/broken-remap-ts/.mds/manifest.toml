@@ -1,0 +1,36 @@
+[[sources]]
+path = ".mds/source/foo/bar.ts.md"
+adapter = "ts"
+hash = "0036c8080e86fb790fbc0a5355b20bbf99cfd4d5881c2283ad2d9f96e44d94b8"
+[[sources.outputs]]
+kind = "source"
+path = "src/foo/bar.ts"
+hash = "3f17ce72c10faf1b66131465dec1841d5bccf4a33858da467d0920facb95b0df"
+
+[[sources]]
+path = ".mds/source/foo/source-map.ts.md"
+adapter = "ts"
+hash = "14d7595ae5575b9848219ebc150254cb92bc728fb4be50b9a10ac325f9d55eea"
+[[sources.outputs]]
+kind = "source"
+path = "src/foo/source-map.ts"
+hash = "2b266dc6c51dd2ed582fca58e636ed8b6c30cd200d235c4d36f6122abcabb7fa"
+
+[[sources]]
+path = ".mds/source/foo/util.ts.md"
+adapter = "ts"
+hash = "edf763f293c1831131c29176eb3b55e6b36e85a0317a00e656ed2832ab0f3efb"
+[[sources.outputs]]
+kind = "source"
+path = "src/foo/util.ts"
+hash = "9559e22ac2d4de6c2c44041285deab284369d5617afb6126bf56b6025ffec6fe"
+
+[[sources]]
+path = ".mds/test/foo/source-map.ts.md"
+adapter = "ts"
+hash = "08d38faa2608ba6bd9c1ace6625b2161f8cc4f02bf62910b452ef2854373890b"
+[[sources.outputs]]
+kind = "test"
+path = "tests/foo/source-map.test.ts"
+hash = "45508026775f65ece77a2ee0480f1f63ab821122e667c173a124c4ad89677e17"
+

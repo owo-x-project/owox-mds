@@ -1,9 +1,0 @@
-id = "vitest"
-match_prefixes = ["vitest", "vitest run", "npm test", "pnpm test", "yarn test", "bun test"]
-
-[behavior]
-input = "stdin"
-append_file_arg = true
-
-[[behavior.diagnostics]]
-pattern = '^(?:error: )?(?P<path>.+?):(?P<line>\d+):(?P<column>\d+): (?P<message>.+)$'

@@ -133,6 +133,7 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
+    "test:diagnostics-regression": "npm run compile && node --test ./out/diagnosticMirror.test.js",
     "package:build": "../../.github/script/package-vscode.sh --pre-release",
     "watch": "tsc -watch -p ./"
   },

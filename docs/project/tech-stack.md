@@ -9,28 +9,26 @@
 - 採用技術やバージョン方針を確認したいとき
 - 新しい採用判断を記録したいとき
 
-| 技術名 | 採用スタック | バージョン | ADR参照 |
-| --- | --- | --- | --- |
-| Rust | core、native CLI、LSP、現行 adapter 生成処理 | 1.86+ | `adr/active/ADR-003-multi-ecosystem-rust-core.md` |
-| serde_json / toml Rust crates | package metadata と `mds.config.toml` の標準 parser | serde_json 1.x / toml 0.8.x | `adr/active/ADR-002-toml-only-config.md`, `adr/active/ADR-003-multi-ecosystem-rust-core.md` |
-| TypeScript / Node.js | VS Code extension、TypeScript 生成対象 | Node.js 24+ | `adr/active/ADR-003-multi-ecosystem-rust-core.md` |
-| Python | Python 生成対象 | 3.13+ | `adr/active/ADR-003-multi-ecosystem-rust-core.md` |
-| Markdown | 設計書兼ソースの正本 | tbd | `adr/active/ADR-001-markdown-source-of-truth.md` |
-| TOML | `mds.config.toml` 設定ファイル | tbd | `adr/active/ADR-002-toml-only-config.md` |
-| cargo | Rust distribution / runner | Rust 1.86+ 同梱系列 | tbd |
-| npm | Node.js distribution / runner | npm 10+ | tbd |
-| uv | Python runner | 最新安定系列 | tbd |
-| clippy / rustfmt / cargo-nextest | Rust lint / format / test 接続候補 | Rust 1.86+ 同梱系列 / 最新安定系列 | tbd |
-| ESLint / Prettier / Biome / Vitest / Jest | TypeScript lint / format / test 接続候補 | 最新安定系列 | tbd |
-| Ruff / Black / Pytest / unittest | Python lint / format / test 接続候補 | 最新安定系列 | tbd |
-| Claude Code / Codex CLI / Opencode / GitHub Copilot CLI | AI agent kit 生成対象 CLI | 各 CLI の最新安定系列 | `adr/active/ADR-006-ai-agent-init-and-dev-setup.md` |
-| SBOM / provenance / artifact signing | 全配布経路の公開前品質 gate | format / provider は release 実装時に固定 | `adr/active/ADR-006-ai-agent-init-and-dev-setup.md` |
+## 採用技術
 
-## 配布と最低対応バージョン
+- `Rust`: 中核実装言語。workspace edition は `2021`
+- `Tokio`: `mds-lsp` の非同期実行基盤。version `1`
+- `tower-lsp`: LSP 実装。version `0.20`
+- `Serde`: config / manifest / protocol data の serialize / deserialize。version `1`
+- `toml`: `mds.config.toml` と package metadata 処理。version `0.8`
+- `serde_yaml`: YAML metadata 処理。version `0.9`
+- `serde_json`: JSON metadata と protocol payload 処理。version `1`
+- `regex`: config / diagnostics / parsing 補助。version `1`
+- `ratatui`: CLI wizard UI。version `0.26`
+- `crossterm`: CLI terminal 制御。version `0.27`
+- `TypeScript`: VS Code extension 実装言語。version `5.3.3`
+- `vscode-languageclient`: VS Code extension から LSP 接続する client。version `9.0.1`
+- `VS Code Extension API`: editor integration 基盤。engine `^1.85.0`
+- `Node.js / npm`: VS Code extension build と package 管理
+- `Markdown`: 実装正本フォーマット
+- `TOML`: project config と descriptor 系設定フォーマット
 
-- mds の現行利用者向け配布面は GitHub Releases の native binary archive と VS Code extension package の 2 系統です。
-- GitHub Releases の native binary archive は `mds` と `mds-lsp` を含み、`install.sh` が OS / architecture に合う archive を取得します。
-- VS Code extension package は platform-specific package として公開し、対応する `mds-lsp` binary を同封します。
-- `mds-core` は単独配布せず、`mds-cli` / `mds-lsp` の内部 workspace dependency として binary に link します。
-- runtime と toolchain の最低対応は Rust 1.86+、Node.js 24+、Python 3.13+ を基準にします。
-- release 前品質 gate は `release.mds.toml` と `./.github/script/release-check.sh` を基準にし、checksum、signature、SBOM、provenance、install smoke test の欠落を許容しません。
+## 補足
+
+- 依存 version は lockfile と各 package manifest を正本とする。
+- 言語・ツールチェーン依存の差分は code 本体に散らさず descriptor と adapter に寄せる。

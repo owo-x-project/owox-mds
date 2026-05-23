@@ -41,7 +41,6 @@ argument-hint: "目的=<何を実装するか> 進め方=<自走|対話>"
 - 正本と矛盾する実装を確定させない
 - 変更理由が説明できない変更を混ぜない
 - 重要な変更では、関連する正本資料やテストへの参照を trace tag で残す
-- `mds/core`、`mds/cli`、`mds/lsp` など mds 管理 package の build / test / lint は、通常 `mds package sync`、`mds build`、`mds lint --package ...`、`mds test --package ...` を使い、Cargo 直実行は mds CLI 起動不能時の bootstrap、release binary 作成、mds 管理外 Rust workspace 検証に限る
 - `docs/project/tech-stack.md` と `docs/project/patterns/index.md` を読み飛ばさない
 - 未実施検証がある場合は残リスクを明記する
 - 高リスク変更や仕様変更が必要なら `question` を使う

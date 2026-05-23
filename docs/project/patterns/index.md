@@ -34,8 +34,4 @@
 
 ## 参照
 
-- `impl-one-feature-markdown.md`: implementation md を 1 機能に限定するパターン
-- `impl-adapter-boundary.md`: 言語固有処理を language adapter に閉じ込めるパターン
-- `data-table-metadata.md`: `Expose` / `Uses` などを Markdown テーブルで扱うパターン
-- `data-import-export-sections.md`: `Imports` / `Exports` と shared definition を section + table で扱うパターン
-- `ux-readable-markdown-source.md`: 人間と AI が読める Markdown 正本を保つパターン
+- 現在は個票なし: 追加時はカテゴリ接頭辞付きの pattern 個票を置く

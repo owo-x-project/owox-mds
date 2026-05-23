@@ -27,6 +27,4 @@
 
 ## 参照
 
-- `rust-implementation-guide.md`: Rust implementation team の module 分割、Cargo workspace、検証導線のガイド。
-- `typescript-implementation-guide.md`: TypeScript implementation team の npm package、TypeScript adapter、生成 fixture のガイド。
-- `python-implementation-guide.md`: Python implementation team の Python package、Python adapter、生成 fixture のガイド。
+- `platform-guide.md`: `platform` チームの役割とルール

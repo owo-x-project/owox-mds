@@ -1,9 +1,0 @@
-id = "cargo-test"
-match_prefixes = ["cargo test"]
-
-[behavior]
-input = "tempfile"
-append_file_arg = false
-
-[[behavior.diagnostics]]
-pattern = '^(?:error|warning)(?:\[[^\]]+\])?: (?P<message>.+)$'

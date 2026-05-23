@@ -4,7 +4,7 @@ set -euo pipefail
 # generate-release-artifacts.sh
 #
 # Generates release quality gate artifacts for all distribution targets.
-# Run after `cargo run -p mds-cli -- build --verbose && ./.github/script/sync-self-hosted-rust.sh && cd .build/rust && cargo build --release && cargo package --allow-dirty`.
+# Run after `cargo build --workspace --release && cargo package --allow-dirty -p mds-core && cargo package --allow-dirty -p mds-cli && cargo package --allow-dirty -p mds-lsp`.
 #
 # Outputs:
 #   .build/release/checksums/   — SHA-256 digests
@@ -21,7 +21,12 @@ if ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null)"; then
 else
   ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 fi
-VERSION="0.2.1-alpha"
+source "$ROOT/.github/script/release-version.sh"
+VERSION="${MDS_RELEASE_VERSION:-$(release_version_from_ref "${GITHUB_REF_NAME:-}")}"
+if [[ -z "$VERSION" ]]; then
+  VERSION="$(current_cargo_version "$ROOT")"
+fi
+PACKAGE_VERSION="$(package_semver_from_release_version "$VERSION")"
 SIGN=false
 
 for arg in "$@"; do
@@ -122,29 +127,31 @@ echo "=== Cargo crates ==="
 
 (
   cd "$ROOT"
-  cargo run -p mds-cli -- build --verbose
-  ./.github/script/sync-self-hosted-rust.sh
+  cargo build --workspace --release
 )
-CRATE_DIR="$ROOT/.build/rust/target/package"
+CRATE_DIR="$ROOT/target/package"
 for crate in mds-core mds-cli mds-lsp; do
   echo "[$crate]"
-  CRATE_FILE="$CRATE_DIR/${crate}-${VERSION}.crate"
+  CRATE_FILE="$CRATE_DIR/${crate}-${PACKAGE_VERSION}.crate"
 
   if [[ ! -f "$CRATE_FILE" ]]; then
     # Try to package if not already present.
     echo "  packaging $crate..."
-    if ! (cd "$ROOT/.build/rust" && cargo package --allow-dirty --no-verify -p "$crate" >/dev/null); then
+    if ! (cd "$ROOT" && cargo package --allow-dirty --no-verify -p "$crate" >/dev/null); then
       echo "  ERROR: failed to package $crate" >&2
       exit 1
     fi
   fi
 
-  if [[ -f "$CRATE_FILE" ]]; then
-    generate_checksum "$CRATE_FILE" "$RELEASE_DIR/checksums/${crate}-${VERSION}.sha256"
+  if [[ ! -f "$CRATE_FILE" ]]; then
+    echo "  ERROR: expected package artifact not found: $CRATE_FILE" >&2
+    echo "  ERROR: release version $VERSION maps to package version $PACKAGE_VERSION; update package manifests before generating artifacts" >&2
+    exit 1
   fi
-  generate_signature "$CRATE_FILE" "$RELEASE_DIR/signatures/${crate}-${VERSION}.sig"
-  generate_sbom "$crate" "$VERSION" "$RELEASE_DIR/sbom/${crate}-${VERSION}.spdx.json" "library"
-  generate_provenance "$crate" "$VERSION" "$RELEASE_DIR/provenance/${crate}-${VERSION}.jsonl"
+  generate_checksum "$CRATE_FILE" "$RELEASE_DIR/checksums/${crate}-${PACKAGE_VERSION}.sha256"
+  generate_signature "$CRATE_FILE" "$RELEASE_DIR/signatures/${crate}-${PACKAGE_VERSION}.sig"
+  generate_sbom "$crate" "$PACKAGE_VERSION" "$RELEASE_DIR/sbom/${crate}-${PACKAGE_VERSION}.spdx.json" "library"
+  generate_provenance "$crate" "$PACKAGE_VERSION" "$RELEASE_DIR/provenance/${crate}-${PACKAGE_VERSION}.jsonl"
 done
 
 # ---------- VS Code extension ----------
@@ -153,12 +160,13 @@ echo ""
 echo "=== VS Code extension ==="
 
 echo "[mds-vscode]"
-"$ROOT/.github/script/package-vscode.sh" --pre-release
+"$ROOT/.github/script/package-vscode.sh" --pre-release --version "$VERSION"
 VSCODE_DIR="$ROOT/.build/node/vscode"
-generate_checksum "$VSCODE_DIR" "$RELEASE_DIR/checksums/mds-vscode-${VERSION}.sha256"
-generate_signature "$VSCODE_DIR" "$RELEASE_DIR/signatures/mds-vscode-${VERSION}.sig"
-generate_sbom "mds-vscode" "$VERSION" "$RELEASE_DIR/sbom/mds-vscode-${VERSION}.spdx.json" "application"
-generate_provenance "mds-vscode" "$VERSION" "$RELEASE_DIR/provenance/mds-vscode-${VERSION}.jsonl"
+VSCODE_VERSION="$(vscode_package_version_from_release_version "$VERSION")"
+generate_checksum "$VSCODE_DIR" "$RELEASE_DIR/checksums/mds-vscode-${VSCODE_VERSION}.sha256"
+generate_signature "$VSCODE_DIR" "$RELEASE_DIR/signatures/mds-vscode-${VSCODE_VERSION}.sig"
+generate_sbom "mds-vscode" "$VSCODE_VERSION" "$RELEASE_DIR/sbom/mds-vscode-${VSCODE_VERSION}.spdx.json" "application"
+generate_provenance "mds-vscode" "$VSCODE_VERSION" "$RELEASE_DIR/provenance/mds-vscode-${VSCODE_VERSION}.jsonl"
 
 echo ""
 echo "=== Done ==="

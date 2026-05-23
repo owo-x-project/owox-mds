@@ -27,4 +27,4 @@
 
 ## 参照
 
-- 現在の integrations は none。追加時は `<integration>.md` を置く。
+- `github-distribution.md`: GitHub Releases / raw install script による配布経路と Release tag 由来 version の扱い

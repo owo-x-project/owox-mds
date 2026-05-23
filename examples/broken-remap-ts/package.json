@@ -1,0 +1,14 @@
+{
+  "name": "broken-remap-ts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "lint": "npx --no-install prettier --check src tests",
+    "format": "npx --no-install prettier --write src tests"
+  },
+  "devDependencies": {
+    "prettier": "3.3.3",
+    "typescript": "5.3.3",
+    "vitest": "2.1.8"
+  }
+}

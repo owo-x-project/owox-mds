@@ -1,5 +1,5 @@
 {
-  "mds: New Implementation Document": {
+  "mds: New Source Document": {
     "prefix": "mds-doc",
     "body": [
       "## Purpose",
@@ -8,64 +8,72 @@
       "",
       "## Contract",
       "",
-      "${2:Define the public contract}",
+      "${2:Define behavior, constraints, and boundaries}",
       "",
-      "## Exports",
+      "## API",
       "",
-      "| Name | Visibility | Summary |",
-      "| --- | --- | --- |",
-      "| ${3:symbolName} | public | ${4:Describe the public definition.} |",
-      "",
-      "##### ${3:symbolName}",
-      "",
-      "${5:Describe the shared definition and who should reference it.}",
-      "",
-      "## Imports",
-      "",
-      "| From | Target | Symbols | Via | Summary | Reference |",
-      "| --- | --- | --- | --- | --- | --- |",
-      "| ${6:builtin} | ${7:target} | ${8:Name} | - | ${9:description} | - |",
-      "",
-      "## Types",
-      "",
-      "```${10:typescript}",
-      "${11:// type definitions}",
-      "```",
+      "${3:Describe the public API in prose. Keep import/export details in the source block.}",
       "",
       "## Source",
       "",
-      "```${12:typescript}",
-      "${13:// implementation}",
+      "```${4:typescript}",
+      "${5:// implementation}",
       "```",
       "",
       "## Cases",
       "",
-      "${14:Describe use cases}"
+      "- ${6:Describe expected behavior}"
     ],
-    "description": "Full mds implementation document template"
+    "description": "Tableless authoring-v2 source document"
   },
-  "mds: Imports Table": {
-    "prefix": "mds-imports",
+  "mds: New Test Document": {
+    "prefix": "mds-test-doc",
     "body": [
-      "## Imports",
+      "## Purpose",
       "",
-      "| From | Target | Symbols | Via | Summary | Reference |",
-      "| --- | --- | --- | --- | --- | --- |",
-      "| ${1|builtin,external,package,workspace,internal|} | ${2:target} | ${3:Name} | ${4:-} | ${5:description} | ${6:-} |"
+      "${1:Describe the verification goal}",
+      "",
+      "## Covers",
+      "",
+      "- ${2:module.id}",
+      "",
+      "## Cases",
+      "",
+      "- ${3:Describe the test case}",
+      "",
+      "## Test",
+      "",
+      "```${4:typescript}",
+      "${5:// test code}",
+      "```"
     ],
-    "description": "Imports table with header"
+    "description": "Tableless authoring-v2 test document"
   },
-  "mds: Imports Row": {
-    "prefix": "mds-import-row",
+  "mds: New Spec Document": {
+    "prefix": "mds-spec-doc",
     "body": [
-      "| ${1|builtin,external,package,workspace,internal|} | ${2:target} | ${3:Name} | ${4:-} | ${5:description} | ${6:-} |"
+      "## Purpose",
+      "",
+      "${1:Describe the feature purpose}",
+      "",
+      "## Contract",
+      "",
+      "${2:Define behavior, constraints, and boundaries}",
+      "",
+      "## API",
+      "",
+      "${3:Describe the public API in prose.}",
+      "",
+      "## Cases",
+      "",
+      "- ${4:Describe expected behavior}"
     ],
-    "description": "Single Imports table row"
+    "description": "Tableless source spec without generated code"
   },
   "mds: Section": {
     "prefix": "mds-section",
     "body": [
-      "## ${1|Purpose,Contract,Exports,Imports,Types,Source,Cases,Test,Covers|}",
+      "## ${1|Purpose,Contract,API,Source,Cases,Covers,Test|}",
       "",
       "${2:content}",
       ""
@@ -75,13 +83,13 @@
   "mds: Code Section": {
     "prefix": "mds-code-section",
     "body": [
-      "## ${1|Types,Source,Test|}",
+      "## ${1|Source,Test|}",
       "",
-      "```${6:typescript}",
-      "${7:// code}",
+      "```${2:typescript}",
+      "${3:// code}",
       "```"
     ],
-    "description": "mds code section with Uses table and code block"
+    "description": "mds source/test code section"
   },
   "mds: Code Block": {
     "prefix": "mds-code",
@@ -97,17 +105,26 @@
     "body": [
       "[package]",
       "enabled = true",
+      "allow_raw_source = false",
       "",
       "[roots]",
-      "markdown = \"src-md\"",
-      "source = \"src\"",
-      "types = \"src\"",
-      "test = \"tests\"",
+      "source_md = \".mds/source\"",
+      "test_md = \".mds/test\"",
+      "source_out = \"src\"",
+      "test_out = \"tests\"",
       "",
-      "[adapters.${1|ts,py,rs|}]",
-      "enabled = true"
+      "[output]",
+      "source = \"{source_out}/{module}.{ext}\"",
+      "test = \"{test_out}/{module}.test.{ext}\"",
+      "",
+      "[quality.${1|ts,py,rs|}]",
+      "linter = \"${2:}\"",
+      "fixer = \"${3:}\"",
+      "test_runner = \"${4:}\"",
+      "required = []",
+      "optional = []"
     ],
-    "description": "Basic mds.config.toml configuration"
+    "description": "Basic authoring-v2 mds.config.toml configuration"
   },
   "mds.config.toml: Full Config": {
     "prefix": "mds-config-full",
@@ -117,29 +134,31 @@
       "allow_raw_source = false",
       "",
       "[roots]",
-      "markdown = \"src-md\"",
-      "source = \"src\"",
-      "types = \"src\"",
-      "test = \"tests\"",
-      "excludes = []",
+      "source_md = \".mds/source\"",
+      "test_md = \".mds/test\"",
+      "source_out = \"src\"",
+      "test_out = \"tests\"",
       "",
-      "[adapters.ts]",
-      "enabled = ${1:true}",
+      "[output]",
+      "source = \"{source_out}/{module}.{ext}\"",
+      "test = \"{test_out}/{module}.test.{ext}\"",
       "",
-      "[adapters.py]",
-      "enabled = ${2:true}",
-      "",
-      "[adapters.rs]",
-      "enabled = ${3:true}",
+      "[[output.override]]",
+      "match = \"${1:build}\"",
+      "kind = \"${2|source,test|}\"",
+      "path = \"${3:build.rs}\"",
       "",
       "[quality.ts]",
-      "lint = \"${4:eslint}\"",
-      "test = \"${5:vitest run}\"",
+      "linter = \"${4:eslint}\"",
+      "fixer = \"${5:prettier --write}\"",
+      "test_runner = \"${6:vitest run}\"",
+      "required = []",
+      "optional = []",
       "",
       "[labels]",
       "# purpose = \"目的\"",
       "# contract = \"契約\""
     ],
-    "description": "Full mds.config.toml with all sections"
+    "description": "Full authoring-v2 mds.config.toml with output override"
   }
 }

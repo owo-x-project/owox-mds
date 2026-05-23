@@ -1,9 +1,0 @@
-id = "unittest"
-match_prefixes = ["python3 -m unittest"]
-
-[behavior]
-input = "stdin"
-append_file_arg = true
-
-[[behavior.diagnostics]]
-pattern = '^(?P<message>.+)$'

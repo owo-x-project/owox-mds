@@ -1,9 +1,18 @@
 [[sources]]
 path = ".mds/source/greet.ts.md"
 adapter = "ts"
-hash = "90e2d39ddf35ea62c242ca021d510b72130fa73f3bce5653639629271aea5cd4"
+hash = "62a95b6b5a08a2e65cdba70a302a92ddf5602a8d265a0076f0a6242eab31ea67"
 [[sources.outputs]]
 kind = "source"
 path = "src/greet.ts"
-hash = "e5ebfa8e49ca8afd8d88929977bad1c6a51c7c75d695a7486ff409ff3594bab9"
+hash = "2023940d0d0a61ad6b98244a98f9dbf6ec5e97143c454e4f4e04072d37dec467"
+
+[[sources]]
+path = ".mds/test/greet.ts.md"
+adapter = "ts"
+hash = "3ec5798a948ce2f495c0cb72c212b7af22cb040ca0aba2d8d5ded4e9f956bc9c"
+[[sources.outputs]]
+kind = "test"
+path = "tests/greet.test.ts"
+hash = "60d68afaa5cf12496127fff72d5c602175057b30f9f918e4daf6de7ba763c59b"
 

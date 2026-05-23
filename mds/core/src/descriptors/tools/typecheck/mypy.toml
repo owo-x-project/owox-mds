@@ -1,9 +1,0 @@
-id = "mypy"
-match_prefixes = ["mypy", "python3 -m mypy", "uv run mypy", "poetry run mypy", "pdm run mypy", "hatch run mypy"]
-
-[behavior]
-input = "stdin"
-append_file_arg = true
-
-[[behavior.diagnostics]]
-pattern = '^(?P<path>.+?):(?P<line>\d+): (?P<message>.+)$'

@@ -541,6 +541,7 @@ dependencies = [
  "crossterm",
  "mds-core",
  "ratatui",
+ "serde_json",
 ]
 
 [[package]]

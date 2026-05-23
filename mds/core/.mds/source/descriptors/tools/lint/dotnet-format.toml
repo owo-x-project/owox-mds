@@ -1,9 +1,0 @@
-id = "dotnet-format"
-match_prefixes = ["dotnet format"]
-
-[behavior]
-input = "stdin"
-append_file_arg = false
-
-[[behavior.diagnostics]]
-pattern = '^(?P<path>.+?)\((?P<line>\d+),(?P<column>\d+)\): (?P<message>.+)$'

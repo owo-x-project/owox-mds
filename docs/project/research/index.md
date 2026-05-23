@@ -28,4 +28,4 @@
 
 ## 参照
 
-- `research-import-export-authoring-shape.md`: import / export を table canonical 化する案と現行方式の比較
+- 現在は個票なし: 追加時は `research-<topic>.md` を置く

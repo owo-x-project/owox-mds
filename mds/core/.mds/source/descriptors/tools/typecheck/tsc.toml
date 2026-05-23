@@ -1,9 +1,0 @@
-id = "tsc"
-match_prefixes = ["tsc", "npx tsc", "npm run typecheck", "pnpm typecheck", "yarn typecheck", "bun run typecheck"]
-
-[behavior]
-input = "stdin"
-append_file_arg = true
-
-[[behavior.diagnostics]]
-pattern = '^(?P<path>.+?)\((?P<line>\d+),(?P<column>\d+)\): (?P<message>.+)$'
